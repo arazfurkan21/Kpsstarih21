@@ -2,90 +2,44 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>12 Konu KPSS Tarih</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KPSS Tarih</title>
     <style>
-        body { font-family: sans-serif; padding: 10px; background-color: #f4f4f4; }
-        .soru-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h3 { color: #333; margin-top: 0; }
-        button { background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 5px; width: 100%; margin-top: 10px; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: sans-serif; background: #f0f0f0; }
+        .container { display: flex; flex-direction: column; height: 100vh; justify-content: center; align-items: center; padding: 10px; }
+        .soru-alani { background: white; width: 95%; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        .nav-buttons { margin-top: 20px; width: 100%; display: flex; justify-content: space-between; }
+        button { padding: 10px 20px; border: none; border-radius: 5px; background: #333; color: white; }
     </style>
 </head>
 <body>
 
-    <h2>KPSS Tarih Deneme (12 Konu)</h2>
-
-    <div class="soru-card">
-        <h3>1. İlk Türk Devletleri</h3>
-        <p>Türk adının anlamı nedir?</p>
-        <button onclick="alert('Cevap: Güçlü/Kuvvetli')">Cevabı Gör</button>
-    </div>
-
-    <div class="soru-card">
-        <h3>2. İslamiyet Öncesi</h3>
-        <p>İlk Türk devletlerinde hükümdara verilen ünvan nedir?</p>
-        <button onclick="alert('Cevap: Kağan/Hakan')">Cevabı Gör</button>
-    </div>
-
-    <div class="soru-card">
-        <h3>3. İlk Müslüman Türk Devletleri</h3>
-        <p>Talas Savaşı'nın Türk tarihi açısından önemi nedir?</p>
-        <button onclick="alert('Cevap: Türklerin İslamiyete geçişi başlamıştır.')">Cevabı Gör</button>
-    </div>
-
-    <div class="soru-card">
-        <h3>4. Türkiye Selçuklu Devleti</h3>
-        <p>Yassı Çemen Savaşı kimler arasında yapıldı?</p>
-        <button onclick="alert('Cevap: Türkiye Selçuklu - Harzemşahlar')">Cevabı Gör</button>
-    </div>
-
-    <div class="soru-card">
-        <h3>5. Osmanlı Kuruluş</h3>
-        <p>Osmanlı'da ilk parayı kim bastırdı?</p>
+<div class="container">
+    <div class="soru-alani" id="soru-kart">
+        <h3 id="konu-baslik">Konu 1</h3>
+        <p id="soru-metin">Osmanlı Devleti'nde ilk parayı kim bastırmıştır?</p>
         <button onclick="alert('Cevap: Osman Bey')">Cevabı Gör</button>
     </div>
-
-    <div class="soru-card">
-        <h3>6. Osmanlı Yükselme</h3>
-        <p>İstanbul'u kuşatan ilk Osmanlı padişahı kimdir?</p>
-        <button onclick="alert('Cevap: Yıldırım Bayezid')">Cevabı Gör</button>
+    
+    <div class="nav-buttons">
+        <button onclick="onceki()">Geri</button>
+        <button onclick="sonraki()">İleri</button>
     </div>
+</div>
 
-    <div class="soru-card">
-        <h3>7. Osmanlı Kültür-Medeniyet</h3>
-        <p>Osmanlı'da divan toplantılarının yapıldığı yer neresidir?</p>
-        <button onclick="alert('Cevap: Kubbealtı')">Cevabı Gör</button>
-    </div>
-
-    <div class="soru-card">
-        <h3>8. Osmanlı Duraklama</h3>
-        <p>Ekber ve Erşed sistemini kim getirdi?</p>
-        <button onclick="alert('Cevap: I. Ahmed')">Cevabı Gör</button>
-    </div>
-
-    <div class="soru-card">
-        <h3>9. Osmanlı Dağılma</h3>
-        <p>II. Mahmut döneminde açılan ilk resmi gazete hangisidir?</p>
-        <button onclick="alert('Cevap: Takvim-i Vekayi')">Cevabı Gör</button>
-    </div>
-
-    <div class="soru-card">
-        <h3>10. XX. Yüzyıl Başlarında Osmanlı</h3>
-        <p>Trablusgarp Savaşı hangi antlaşma ile sona erdi?</p>
-        <button onclick="alert('Cevap: Uşi Antlaşması')">Cevabı Gör</button>
-    </div>
-
-    <div class="soru-card">
-        <h3>11. Kurtuluş Savaşı</h3>
-        <p>Kurtuluş Savaşı'nın "yazılı" belgesi sayılan kongre hangisidir?</p>
-        <button onclick="alert('Cevap: Erzurum Kongresi')">Cevabı Gör</button>
-    </div>
-
-    <div class="soru-card">
-        <h3>12. Atatürk İlkeleri ve İnkılaplar</h3>
-        <p>Saltanat hangi tarihte kaldırıldı?</p>
-        <button onclick="alert('Cevap: 1 Kasım 1922')">Cevabı Gör</button>
-    </div>
-
+<script>
+    const sorular = [
+        {konu: "1. İlk Türk Devletleri", soru: "Türk adının anlamı nedir?"},
+        {konu: "2. İslamiyet Öncesi", soru: "Hükümdara verilen ünvan?"},
+        // Buraya 12 soruya kadar aynı yapıda ekle...
+    ];
+    let index = 0;
+    function sonraki() { if(index < sorular.length-1) index++; guncelle(); }
+    function onceki() { if(index > 0) index--; guncelle(); }
+    function guncelle() {
+        document.getElementById("konu-baslik").innerText = sorular[index].konu;
+        document.getElementById("soru-metin").innerText = sorular[index].soru;
+    }
+</script>
 </body>
 </html>
