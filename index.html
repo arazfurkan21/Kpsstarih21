@@ -1,45 +1,726 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KPSS Tarih</title>
-    <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: sans-serif; background: #f0f0f0; }
-        .container { display: flex; flex-direction: column; height: 100vh; justify-content: center; align-items: center; padding: 10px; }
-        .soru-alani { background: white; width: 95%; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
-        .nav-buttons { margin-top: 20px; width: 100%; display: flex; justify-content: space-between; }
-        button { padding: 10px 20px; border: none; border-radius: 5px; background: #333; color: white; }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>KPSS Tarih — Sınav Defteri</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@500&display=swap');
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100vh;
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: radial-gradient(ellipse at top, #F3EBD9 0%, #E9DDC0 55%, #DFCFA8 100%);
+    color: #2B2620;
+  }
+  body { display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .wrap { width: 100%; max-width: 440px; }
+  .paper {
+    background-color: #FBF6E9;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(184,147,90,0.08) 0%, transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(139,38,53,0.06) 0%, transparent 50%);
+    border: 1px solid #D8C7A0;
+    box-shadow: 0 12px 30px -8px rgba(43,38,32,0.25), 0 1px 0 rgba(255,255,255,0.6) inset;
+    border-radius: 3px;
+    padding: 28px 26px;
+  }
+  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #8B2635; }
+  .row-between { display: flex; align-items: center; justify-content: space-between; }
+  h1.title { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 42px; line-height: 1.1; margin: 6px 0 8px; }
+  p.sub { font-size: 14px; color: #5B5140; margin: 0 0 24px; }
+  .best-badge { margin-bottom: 22px; padding: 10px 14px; border-radius: 3px; font-size: 14px; display: flex; justify-content: space-between; background: #EFE4C7; border: 1px solid #D8C7A0; color: #4A3F2E; }
+  .best-badge b { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+  label.field-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #8B7355; margin-bottom: 8px; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .chip { font-family: inherit; font-size: 14px; padding: 7px 12px; border-radius: 3px; border: 1px solid #C9B688; background: transparent; color: #4A3F2E; cursor: pointer; transition: all .15s ease; }
+  .chip.active { background: #2B2620; color: #F3EBD9; border-color: #2B2620; }
+  .count-row { display: flex; gap: 8px; margin-bottom: 28px; }
+  .count-btn { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 9px 0; border-radius: 3px; border: 1px solid #C9B688; background: transparent; color: #4A3F2E; cursor: pointer; transition: all .15s ease; }
+  .count-btn.active { background: #8B2635; color: #FBF6E9; border-color: #8B2635; }
+  .btn-primary { width: 100%; padding: 13px 0; border-radius: 3px; border: none; background: #2B2620; color: #F3EBD9; font-family: inherit; font-weight: 600; font-size: 16px; letter-spacing: 0.02em; cursor: pointer; transition: opacity .15s ease; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary { flex: 1; padding: 13px 0; border-radius: 3px; background: transparent; border: 1px solid #C9B688; color: #2B2620; font-family: inherit; font-size: 14px; cursor: pointer; }
+  .seal { width: 64px; height: 64px; opacity: 0.4; transform: scale(0.9); transition: all .5s ease; }
+  .seal.active { opacity: 1; transform: scale(1); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25)); }
+  .meta-line { font-size: 12px; margin-top: 4px; color: #8B7355; font-family: 'JetBrains Mono', monospace; }
+  .progress-track { width: 100%; height: 4px; border-radius: 4px; background: #E3D5AE; overflow: hidden; margin-bottom: 24px; }
+  .progress-fill { height: 100%; border-radius: 4px; background: #B8935A; transition: width .3s ease; }
+  h2.question { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px; line-height: 1.3; margin: 0 0 22px; }
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+  .option { text-align: left; padding: 12px 16px; border-radius: 3px; font-family: inherit; font-size: 15px; cursor: pointer; background: transparent; border: 1px solid #C9B688; color: #2B2620; transition: all .15s ease; }
+  .option .opt-letter { display: inline-block; width: 20px; font-size: 12px; margin-right: 8px; font-family: 'JetBrains Mono', monospace; color: #8B7355; }
+  .option.correct { background: #E4EEE6; border-color: #3F6B4F; color: #2C4A36; }
+  .option.wrong { background: #F4E1E2; border-color: #8B2635; color: #6E1D28; }
+  .option:disabled { cursor: default; }
+  .result-title { text-align: center; }
+  .result-score { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 52px; margin: 12px 0; text-align: center; }
+  .result-pct { font-size: 14px; color: #5B5140; margin-bottom: 24px; text-align: center; }
+  .review-list { text-align: left; margin-bottom: 26px; max-height: 260px; overflow-y: auto; padding-right: 4px; }
+  .review-item { margin-bottom: 10px; padding: 10px 12px; border-radius: 3px; font-size: 12.5px; }
+  .review-item.ok { background: #E4EEE6; border: 1px solid #3F6B4F; }
+  .review-item.bad { background: #F4E1E2; border: 1px solid #8B2635; }
+  .review-item .q-text { font-weight: 600; margin-bottom: 3px; }
+  .review-item .a-text { color: #5B5140; }
+  .btn-group { display: flex; gap: 8px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
 </head>
 <body>
-
-<div class="container">
-    <div class="soru-alani" id="soru-kart">
-        <h3 id="konu-baslik">Konu 1</h3>
-        <p id="soru-metin">Osmanlı Devleti'nde ilk parayı kim bastırmıştır?</p>
-        <button onclick="alert('Cevap: Osman Bey')">Cevabı Gör</button>
-    </div>
-    
-    <div class="nav-buttons">
-        <button onclick="onceki()">Geri</button>
-        <button onclick="sonraki()">İleri</button>
-    </div>
-</div>
+<div class="wrap"><div id="root"></div></div>
 
 <script>
-    const sorular = [
-        {konu: "1. İlk Türk Devletleri", soru: "Türk adının anlamı nedir?"},
-        {konu: "2. İslamiyet Öncesi", soru: "Hükümdara verilen ünvan?"},
-        // Buraya 12 soruya kadar aynı yapıda ekle...
-    ];
-    let index = 0;
-    function sonraki() { if(index < sorular.length-1) index++; guncelle(); }
-    function onceki() { if(index > 0) index--; guncelle(); }
-    function guncelle() {
-        document.getElementById("konu-baslik").innerText = sorular[index].konu;
-        document.getElementById("soru-metin").innerText = sorular[index].soru;
+"use strict";
+
+// ---------------------------------------------------------------------------
+// Soru Bankası — KPSS Tarih
+// ---------------------------------------------------------------------------
+const QUESTIONS = [
+  { id: 1, topic: "İslamiyet Öncesi", q: "Türk tarihinde bilinen ilk Türk devleti aşağıdakilerden hangisidir?", options: ["Asya Hun İmparatorluğu", "Göktürk Kağanlığı", "Uygur Devleti", "Avar Devleti"], correct: 0 },
+  { id: 2, topic: "İslamiyet Öncesi", q: "Türk adının geçtiği ilk Türkçe metin hangisidir?", options: ["Orhun Abideleri", "Divan-ı Lügati't Türk", "Kutadgu Bilig", "Uygur Yazıtları"], correct: 0 },
+  { id: 3, topic: "İslamiyet Öncesi", q: "İlk düzenli ordu olan 'Onlu Sistem' hangi hükümdar tarafından kurulmuştur?", options: ["Bilge Kağan", "Mete Han", "Kürşad", "İstemi Yabgu"], correct: 1 },
+  { id: 4, topic: "İlk Türk-İslam Devletleri", q: "İlk Müslüman Türk devleti hangisidir?", options: ["Karahanlılar", "Gazneliler", "Selçuklular", "Tolunoğulları"], correct: 0 },
+  { id: 5, topic: "İlk Türk-İslam Devletleri", q: "Türk-İslam edebiyatının ilk siyasetname örneği kabul edilen eser hangisidir?", options: ["Divan-ı Hikmet", "Kutadgu Bilig", "Atabetü'l Hakayık", "Divanü Lugati't Türk"], correct: 1 },
+  { id: 6, topic: "Büyük Selçuklu", q: "Büyük Selçuklu Devleti'nin kurucusu kimdir?", options: ["Tuğrul Bey", "Çağrı Bey", "Alparslan", "Melikşah"], correct: 0 },
+  { id: 7, topic: "Büyük Selçuklu", q: "Malazgirt Savaşı hangi yıl gerçekleşmiştir?", options: ["1064", "1071", "1077", "1092"], correct: 1 },
+  { id: 8, topic: "Büyük Selçuklu", q: "Nizamiye Medreselerini kuran Selçuklu veziri kimdir?", options: ["Nizamülmülk", "Kutalmışoğlu Süleyman Şah", "Danişmend Gazi", "Sultan Sencer"], correct: 0 },
+  { id: 9, topic: "Anadolu Selçuklu", q: "Anadolu'da kurulan ilk Türk beyliği hangisidir?", options: ["Saltuklular", "Danişmendliler", "Anadolu Selçuklu Devleti", "Artuklular"], correct: 2 },
+  { id: 10, topic: "Osmanlı Kuruluş", q: "Osmanlı Devleti'nin kurucusu kimdir?", options: ["Ertuğrul Gazi", "Osman Gazi", "Orhan Gazi", "I. Murad"], correct: 1 },
+  { id: 11, topic: "Osmanlı Kuruluş", q: "Osmanlıların Rumeli'ye geçişte ele geçirdiği ilk üs hangisidir?", options: ["Gelibolu", "Çimpe Kalesi", "Edirne", "Sazlıdere"], correct: 1 },
+  { id: 12, topic: "Osmanlı Kuruluş", q: "Yeniçeri Ocağı hangi padişah döneminde kurulmuştur?", options: ["Orhan Gazi", "I. Murad", "Yıldırım Bayezid", "II. Murad"], correct: 1 },
+  { id: 13, topic: "Osmanlı Yükselme", q: "İstanbul'un fethi hangi yıl gerçekleşmiştir?", options: ["1451", "1453", "1461", "1473"], correct: 1 },
+  { id: 14, topic: "Osmanlı Yükselme", q: "Çaldıran Savaşı hangi iki devlet arasında yapılmıştır?", options: ["Osmanlı - Memlük", "Osmanlı - Safevi", "Osmanlı - Venedik", "Osmanlı - Avusturya"], correct: 1 },
+  { id: 15, topic: "Osmanlı Yükselme", q: "Kanuni Sultan Süleyman döneminde imzalanan ilk kapitülasyonlar hangi ülkeyeydi?", options: ["İngiltere", "Venedik", "Fransa", "Hollanda"], correct: 2 },
+  { id: 16, topic: "Osmanlı Duraklama", q: "Osmanlı Devleti'nin toprak kaybettiği ilk antlaşma hangisidir?", options: ["Karlofça Antlaşması", "Zitvatorok Antlaşması", "Küçük Kaynarca Antlaşması", "Pasarofça Antlaşması"], correct: 0 },
+  { id: 17, topic: "Osmanlı Gerileme", q: "Osmanlı Devleti'nde toprak kaybının en fazla olduğu antlaşma hangisidir?", options: ["Karlofça", "Küçük Kaynarca", "Ziştovi", "Yaş"], correct: 1 },
+  { id: 18, topic: "Osmanlı Gerileme", q: "İlk toprak kaybı yaşanan ve Kırım'ın bağımsızlığını tanıyan antlaşma hangisidir?", options: ["Karlofça", "Küçük Kaynarca", "Pasarofça", "Sistova"], correct: 1 },
+  { id: 19, topic: "Islahatlar", q: "Tanzimat Fermanı hangi padişah döneminde ilan edilmiştir?", options: ["II. Mahmud", "Abdülmecid", "Abdülaziz", "II. Abdülhamid"], correct: 1 },
+  { id: 20, topic: "Islahatlar", q: "Osmanlı'da ilk anayasa (Kanun-i Esasi) hangi yıl ilan edilmiştir?", options: ["1839", "1856", "1876", "1908"], correct: 2 },
+  { id: 21, topic: "Osmanlı Dağılma", q: "I. Dünya Savaşı'nda Osmanlı'nın taraf olduğu ilk cephe hangisidir?", options: ["Kanal Cephesi", "Kafkas Cephesi", "Çanakkale Cephesi", "Irak Cephesi"], correct: 1 },
+  { id: 22, topic: "Osmanlı Dağılma", q: "Mondros Ateşkes Antlaşması hangi yıl imzalanmıştır?", options: ["1917", "1918", "1919", "1920"], correct: 1 },
+  { id: 23, topic: "Milli Mücadele", q: "Mustafa Kemal'in Samsun'a çıkış tarihi hangisidir?", options: ["19 Mayıs 1919", "23 Nisan 1920", "30 Ağustos 1922", "29 Ekim 1923"], correct: 0 },
+  { id: 24, topic: "Milli Mücadele", q: "Misak-ı Milli hangi kongrede kabul edilen esaslara dayanır?", options: ["Amasya Genelgesi", "Erzurum ve Sivas Kongreleri", "Son Osmanlı Mebusan Meclisi", "Havza Genelgesi"], correct: 1 },
+  { id: 25, topic: "Milli Mücadele", q: "TBMM hangi tarihte açılmıştır?", options: ["23 Nisan 1920", "19 Mayıs 1919", "16 Mart 1920", "20 Ocak 1921"], correct: 0 },
+  { id: 26, topic: "Milli Mücadele", q: "Büyük Taarruz hangi yıl gerçekleşmiştir?", options: ["1920", "1921", "1922", "1923"], correct: 2 },
+  { id: 27, topic: "Milli Mücadele", q: "Lozan Barış Antlaşması hangi yıl imzalanmıştır?", options: ["1922", "1923", "1924", "1925"], correct: 1 },
+  { id: 28, topic: "İnkılaplar", q: "Cumhuriyet hangi tarihte ilan edilmiştir?", options: ["3 Mart 1924", "29 Ekim 1923", "20 Nisan 1924", "1 Kasım 1922"], correct: 1 },
+  { id: 29, topic: "İnkılaplar", q: "Halifeliğin kaldırılması hangi tarihte gerçekleşmiştir?", options: ["1 Kasım 1922", "3 Mart 1924", "17 Şubat 1926", "10 Nisan 1928"], correct: 1 },
+  { id: 30, topic: "İnkılaplar", q: "Harf İnkılabı hangi yıl gerçekleştirilmiştir?", options: ["1925", "1926", "1928", "1930"], correct: 2 },
+  { id: 31, topic: "Osmanlı Kuruluş", q: "Osmanlı Devleti'nde ilk medrese hangi şehirde açılmıştır?", options: ["Bursa", "İznik", "Edirne", "Bilecik"], correct: 1 },
+  { id: 32, topic: "Osmanlı Yükselme", q: "Mercidabık ve Ridaniye savaşları sonucunda Osmanlı hangi devleti ortadan kaldırmıştır?", options: ["Safeviler", "Memlükler", "Venedik", "Akkoyunlular"], correct: 1 },
+  { id: 33, topic: "Osmanlı Duraklama", q: "II. Viyana Kuşatması hangi padişah döneminde gerçekleşmiştir?", options: ["IV. Murad", "IV. Mehmed", "II. Süleyman", "II. Mustafa"], correct: 1 },
+  { id: 34, topic: "Osmanlı Gerileme", q: "Osmanlı Devleti'nde ilk kez toprak karşılığında değil, sürekli maaşla beslenen daimi ordu kurma girişimi hangi padişaha aittir?", options: ["III. Selim", "II. Mahmud", "I. Abdülhamid", "III. Mustafa"], correct: 0 },
+  { id: 35, topic: "Osmanlı Gerileme", q: "Yeniçeri Ocağı hangi olayla kaldırılmıştır?", options: ["Patrona Halil İsyanı", "Vaka-i Hayriye", "Kabakçı Mustafa İsyanı", "31 Mart Vakası"], correct: 1 },
+  { id: 36, topic: "Islahatlar", q: "Islahat Fermanı hangi yıl ilan edilmiştir?", options: ["1839", "1856", "1876", "1908"], correct: 1 },
+  { id: 37, topic: "Osmanlı Dağılma", q: "Trablusgarp Savaşı sonunda imzalanan antlaşma hangisidir?", options: ["Ouchy (Uşi) Antlaşması", "Londra Antlaşması", "Bükreş Antlaşması", "İstanbul Antlaşması"], correct: 0 },
+  { id: 38, topic: "Milli Mücadele", q: "Sevr Antlaşması hangi yıl imzalanmıştır?", options: ["1918", "1919", "1920", "1921"], correct: 2 },
+  { id: 39, topic: "Milli Mücadele", q: "Doğu Cephesi'nde Ermenilerle yapılan mücadeleyi yöneten komutan kimdir?", options: ["Kazım Karabekir", "Ali Fuat Cebesoy", "Refet Bele", "Fevzi Çakmak"], correct: 0 },
+  { id: 40, topic: "İnkılaplar", q: "Kadınlara seçme ve seçilme hakkı milletvekili seçimlerinde hangi yıl tanınmıştır?", options: ["1930", "1933", "1934", "1935"], correct: 2 },
+
+  // --- İslamiyet Öncesi (+7) ---
+  { id: 41, topic: "İslamiyet Öncesi", q: "Avrupa Hun Devleti'nin, Kavimler Göçü sürecinde Roma'ya kadar ilerleyen en güçlü hükümdarı kimdir?", options: ["Attila", "Balamir", "Muncuk", "Oktar"], correct: 0 },
+  { id: 42, topic: "İslamiyet Öncesi", q: "Türklerin kullandığı ilk milli alfabe hangisidir?", options: ["Uygur Alfabesi", "Göktürk (Orhun) Alfabesi", "Arap Alfabesi", "Kiril Alfabesi"], correct: 1 },
+  { id: 43, topic: "İslamiyet Öncesi", q: "Yerleşik hayata geçen, matbaacılık ve kağıt üretiminde ileri giden ilk Türk topluluğu hangisidir?", options: ["Hunlar", "Göktürkler", "Uygurlar", "Avarlar"], correct: 2 },
+  { id: 44, topic: "İslamiyet Öncesi", q: "Orhun Abideleri kim tarafından yazıya geçirilmiştir?", options: ["Bilge Kağan", "Kültigin", "Yollug Tigin", "Tonyukuk"], correct: 2 },
+  { id: 45, topic: "İslamiyet Öncesi", q: "İslamiyet öncesi Türklerin en yaygın dini inancı hangisidir?", options: ["Gök Tanrı Dini", "Budizm", "Maniheizm", "Musevilik"], correct: 0 },
+  { id: 46, topic: "İslamiyet Öncesi", q: "Asya Hun Devleti hangi hükümdar döneminde en geniş sınırlarına ulaşmıştır?", options: ["Mete Han", "Attila", "Bilge Kağan", "İstemi Yabgu"], correct: 0 },
+  { id: 47, topic: "İslamiyet Öncesi", q: "Göktürk Kağanlığı'nı (Kutluk Devleti'ni) yeniden kuran hükümdar kimdir?", options: ["Bilge Kağan", "Kürşad", "Kutluk (İlteriş) Kağan", "Bumin Kağan"], correct: 2 },
+
+  // --- İlk Türk-İslam Devletleri (+8) ---
+  { id: 48, topic: "İlk Türk-İslam Devletleri", q: "Karahanlı hükümdarlarından İslamiyeti resmi din olarak kabul eden ilk hükümdar kimdir?", options: ["Satuk Buğra Han", "Bilge Kül Kadir Han", "Yusuf Kadir Han", "Arslan Han"], correct: 0 },
+  { id: 49, topic: "İlk Türk-İslam Devletleri", q: "İlk kez 'Sultan' unvanını kullanan Türk-İslam devlet adamı kimdir?", options: ["Alparslan", "Gazneli Mahmud", "Tuğrul Bey", "Sebüktegin"], correct: 1 },
+  { id: 50, topic: "İlk Türk-İslam Devletleri", q: "Tolunoğulları Devleti hangi bölgede kurulmuştur?", options: ["Mısır", "Horasan", "Maveraünnehir", "Suriye"], correct: 0 },
+  { id: 51, topic: "İlk Türk-İslam Devletleri", q: "Mısır'da kurulan ve Tolunoğulları'ndan sonra bölgede hüküm süren ikinci Türk-İslam devleti hangisidir?", options: ["Akşitler", "Eyyubiler", "Memlükler", "Zengiler"], correct: 0 },
+  { id: 52, topic: "İlk Türk-İslam Devletleri", q: "Karahanlı Devleti'nde ülkenin doğu ve batı olarak iki kağan tarafından yönetilmesi sistemine ne ad verilir?", options: ["Ülüş Sistemi", "İkili Teşkilat", "Atabeylik", "Melik Sistemi"], correct: 1 },
+  { id: 53, topic: "İlk Türk-İslam Devletleri", q: "Kutadgu Bilig adlı eserin yazarı kimdir?", options: ["Kaşgarlı Mahmud", "Yusuf Has Hacib", "Edip Ahmed Yükneki", "Ahmed Yesevi"], correct: 1 },
+  { id: 54, topic: "İlk Türk-İslam Devletleri", q: "Türk dilinin ilk sözlüğü olan Divanü Lügati't-Türk'ün yazarı kimdir?", options: ["Kaşgarlı Mahmud", "Yusuf Has Hacib", "Ahmed Yesevi", "Edip Ahmed Yükneki"], correct: 0 },
+  { id: 55, topic: "İlk Türk-İslam Devletleri", q: "Türk tasavvuf edebiyatının ilk örneği kabul edilen Divan-ı Hikmet'in yazarı kimdir?", options: ["Ahmed Yesevi", "Yusuf Has Hacib", "Kaşgarlı Mahmud", "Edip Ahmed Yükneki"], correct: 0 },
+
+  // --- Büyük Selçuklu (+7) ---
+  { id: 56, topic: "Büyük Selçuklu", q: "Büyük Selçuklu Devleti sınırlarının en geniş olduğu dönem hangi hükümdara aittir?", options: ["Tuğrul Bey", "Çağrı Bey", "Alparslan", "Melikşah"], correct: 3 },
+  { id: 57, topic: "Büyük Selçuklu", q: "Selçukluların Gaznelileri yenerek bağımsızlıklarını ilan ettikleri savaş hangisidir?", options: ["Pasinler Savaşı", "Dandanakan Savaşı", "Katvan Savaşı", "Miryokefalon Savaşı"], correct: 1 },
+  { id: 58, topic: "Büyük Selçuklu", q: "Büyük Selçuklu Devleti'nin Karahitaylara yenilerek zayıflamaya başladığı savaş hangisidir?", options: ["Katvan Savaşı", "Pasinler Savaşı", "Dandanakan Savaşı", "Malazgirt Savaşı"], correct: 0 },
+  { id: 59, topic: "Büyük Selçuklu", q: "Selçukluların Bizans'a karşı kazandığı ilk önemli zafer hangisidir?", options: ["Malazgirt Savaşı", "Pasinler Savaşı", "Miryokefalon Savaşı", "Katvan Savaşı"], correct: 1 },
+  { id: 60, topic: "Büyük Selçuklu", q: "Tuğrul Bey, Şii Büveyhoğulları'nın baskısından hangi halifeyi kurtararak 'Doğunun ve Batının Sultanı' unvanını almıştır?", options: ["Halife Kaim Biemrillah", "Halife Mu'tasım", "Halife Nasır", "Halife Müstansır"], correct: 0 },
+  { id: 61, topic: "Büyük Selçuklu", q: "Melikşah döneminde Ömer Hayyam öncülüğünde hazırlanan takvim hangisidir?", options: ["Hicri Takvim", "Celali Takvim", "Rumi Takvim", "Miladi Takvim"], correct: 1 },
+  { id: 62, topic: "Büyük Selçuklu", q: "Büyük Selçuklu Devleti, Sultan Sencer'in Oğuz isyanı sonrası esir düşmesiyle hangi yüzyılda fiilen sona ermiştir?", options: ["11. yüzyıl", "12. yüzyıl", "13. yüzyıl", "10. yüzyıl"], correct: 1 },
+
+  // --- Anadolu Selçuklu (+9) ---
+  { id: 63, topic: "Anadolu Selçuklu", q: "Türkiye Selçuklu Devleti'nin kurucusu kimdir?", options: ["Süleyman Şah", "Alparslan", "I. Mesud", "II. Kılıçarslan"], correct: 0 },
+  { id: 64, topic: "Anadolu Selçuklu", q: "İznik'i Türklerden geri almak amacıyla düzenlenen I. Haçlı Seferi hangi yüzyılda gerçekleşmiştir?", options: ["10. yüzyıl", "11. yüzyıl", "12. yüzyıl", "13. yüzyıl"], correct: 1 },
+  { id: 65, topic: "Anadolu Selçuklu", q: "I. Haçlı Seferi sonrasında Türkiye Selçuklu Devleti başkentini hangi şehre taşımıştır?", options: ["İznik'ten Konya'ya", "Kayseri'den Sivas'a", "Konya'dan Kayseri'ye", "İznik'ten Kayseri'ye"], correct: 0 },
+  { id: 66, topic: "Anadolu Selçuklu", q: "Anadolu'nun kesin bir Türk yurdu olduğunun anlaşıldığı, Selçukluların Bizans'a karşı kazandığı savaş hangisidir?", options: ["Malazgirt Savaşı", "Miryokefalon Savaşı", "Pasinler Savaşı", "Kösedağ Savaşı"], correct: 1 },
+  { id: 67, topic: "Anadolu Selçuklu", q: "Türkiye Selçuklu Devleti'nin en parlak dönemi hangi hükümdar zamanında yaşanmıştır?", options: ["II. Kılıçarslan", "I. Gıyaseddin Keyhüsrev", "I. Alaeddin Keykubad", "II. Gıyaseddin Keyhüsrev"], correct: 2 },
+  { id: 68, topic: "Anadolu Selçuklu", q: "Türkiye Selçuklu Devleti'nin Moğollara yenilerek çöküş sürecine girdiği savaş hangisidir?", options: ["Kösedağ Savaşı", "Miryokefalon Savaşı", "Ankara Savaşı", "Malazgirt Savaşı"], correct: 0 },
+  { id: 69, topic: "Anadolu Selçuklu", q: "Anadolu Selçuklu döneminde kervan yollarının güvenliğini sağlamak ve ticareti geliştirmek amacıyla inşa edilen yapılara ne ad verilir?", options: ["Medrese", "Kervansaray", "İmaret", "Külliye"], correct: 1 },
+  { id: 70, topic: "Anadolu Selçuklu", q: "Anadolu'da esnaf ve zanaatkârları teşkilatlandıran Ahilik teşkilatının kurucusu kimdir?", options: ["Ahi Evran", "Mevlana", "Yunus Emre", "Hacı Bektaş Veli"], correct: 0 },
+  { id: 71, topic: "Anadolu Selçuklu", q: "Anadolu'da kurulan ilk Türk denizci beyliğinin kurucusu kimdir?", options: ["Çaka Bey", "Danişmend Gazi", "Artuk Bey", "Mengücek Gazi"], correct: 0 },
+
+  // --- Osmanlı Kuruluş (+6) ---
+  { id: 72, topic: "Osmanlı Kuruluş", q: "Osman Gazi'nin Bizans tekfurlarına karşı kazandığı ilk büyük zafer hangisidir?", options: ["Koyunhisar Savaşı", "Sazlıdere Savaşı", "Palekanon Savaşı", "Domaniç Savaşı"], correct: 0 },
+  { id: 73, topic: "Osmanlı Kuruluş", q: "Osmanlı Devleti'nin ilk başkenti olan ve Orhan Gazi tarafından fethedilen şehir hangisidir?", options: ["İznik", "Bursa", "Edirne", "Bilecik"], correct: 1 },
+  { id: 74, topic: "Osmanlı Kuruluş", q: "Osmanlı Devleti'nde ilk düzenli ordu (Yaya ve Müsellem) hangi padişah döneminde kurulmuştur?", options: ["Osman Gazi", "Orhan Gazi", "I. Murad", "Yıldırım Bayezid"], correct: 1 },
+  { id: 75, topic: "Osmanlı Kuruluş", q: "I. Murad'ın şehit olduğu savaş hangisidir?", options: ["I. Kosova Savaşı", "Niğbolu Savaşı", "Sırpsındığı Savaşı", "Çirmen Savaşı"], correct: 0 },
+  { id: 76, topic: "Osmanlı Kuruluş", q: "Ankara Savaşı hangi iki hükümdar arasında yapılmıştır?", options: ["Yıldırım Bayezid - Timur", "II. Murad - Timur", "I. Murad - Timur", "Yıldırım Bayezid - Karamanoğlu"], correct: 0 },
+  { id: 77, topic: "Osmanlı Kuruluş", q: "Ankara Savaşı'nın kaybedilmesi sonucunda Osmanlı Devleti'nde başlayan taht kavgaları dönemine ne ad verilir?", options: ["Fetret Devri", "İstibdat Dönemi", "Meşrutiyet Dönemi", "Islahat Dönemi"], correct: 0 },
+
+  // --- Osmanlı Yükselme (+6) ---
+  { id: 78, topic: "Osmanlı Yükselme", q: "Fatih Sultan Mehmed, Akkoyunlu hükümdarı Uzun Hasan'ı hangi savaşta yenmiştir?", options: ["Otlukbeli Savaşı", "Çaldıran Savaşı", "Varna Savaşı", "Kosova Savaşı"], correct: 0 },
+  { id: 79, topic: "Osmanlı Yükselme", q: "Trabzon Rum İmparatorluğu hangi padişah tarafından Osmanlı topraklarına katılmıştır?", options: ["II. Murad", "Fatih Sultan Mehmed", "II. Bayezid", "Yavuz Sultan Selim"], correct: 1 },
+  { id: 80, topic: "Osmanlı Yükselme", q: "Kanuni Sultan Süleyman'ın Macaristan'ı hakimiyeti altına aldığı savaş hangisidir?", options: ["Mohaç Savaşı", "Belgrad Kuşatması", "Rodos Kuşatması", "Zigetvar Kuşatması"], correct: 0 },
+  { id: 81, topic: "Osmanlı Yükselme", q: "Osmanlı donanmasının Akdeniz'de üstünlüğünü kanıtladığı, Barbaros Hayreddin Paşa'nın kazandığı deniz savaşı hangisidir?", options: ["İnebahtı Deniz Savaşı", "Preveze Deniz Savaşı", "Çeşme Deniz Savaşı", "Navarin Deniz Savaşı"], correct: 1 },
+  { id: 82, topic: "Osmanlı Yükselme", q: "Kanuni Sultan Süleyman'dan sonraki padişahlar döneminde uzun yıllar sadrazamlık yaparak devlet işlerini yürüten devlet adamı kimdir?", options: ["İbrahim Paşa", "Sokullu Mehmed Paşa", "Rüstem Paşa", "Lütfi Paşa"], correct: 1 },
+  { id: 83, topic: "Osmanlı Yükselme", q: "Halifelik unvanı, Yavuz Sultan Selim döneminde hangi devletin ortadan kaldırılmasıyla Osmanlı padişahlarına geçmiştir?", options: ["Memlük Devleti", "Safevi Devleti", "Akkoyunlu Devleti", "Dulkadiroğulları"], correct: 0 },
+
+  // --- Osmanlı Duraklama (+8) ---
+  { id: 84, topic: "Osmanlı Duraklama", q: "Duraklama Dönemi'nin başlangıcı genellikle hangi olayla ilişkilendirilir?", options: ["Sokullu Mehmed Paşa'nın ölümü", "İstanbul'un fethi", "Kanuni'nin ölümü", "Preveze Deniz Savaşı"], correct: 0 },
+  { id: 85, topic: "Osmanlı Duraklama", q: "Osmanlı donanmasının Haçlı donanmasına karşı ağır bir yenilgi aldığı ve Akdeniz'deki üstünlüğünü kaybettiği deniz savaşı hangisidir?", options: ["Preveze Deniz Savaşı", "İnebahtı Deniz Savaşı", "Çeşme Deniz Savaşı", "Navarin Deniz Savaşı"], correct: 1 },
+  { id: 86, topic: "Osmanlı Duraklama", q: "Osmanlı Devleti'nin Avusturya karşısındaki üstünlüğünün ilk kez sarsıldığı antlaşma hangisidir?", options: ["Karlofça Antlaşması", "Zitvatorok Antlaşması", "Vasvar Antlaşması", "Belgrad Antlaşması"], correct: 1 },
+  { id: 87, topic: "Osmanlı Duraklama", q: "IV. Murad'ın Safevilerle imzaladığı ve Osmanlı-İran sınırını büyük ölçüde belirleyen antlaşma hangisidir?", options: ["Amasya Antlaşması", "Kasr-ı Şirin Antlaşması", "Zuhab Antlaşması", "Serav Antlaşması"], correct: 1 },
+  { id: 88, topic: "Osmanlı Duraklama", q: "Girit Adası'nın fethi hangi padişah döneminde tamamlanmıştır?", options: ["IV. Murad", "IV. Mehmed", "II. Süleyman", "II. Ahmed"], correct: 1 },
+  { id: 89, topic: "Osmanlı Duraklama", q: "II. Viyana Kuşatması'nı yöneten ve kuşatmanın başarısızlıkla sonuçlanmasından sorumlu tutulan sadrazam kimdir?", options: ["Merzifonlu Kara Mustafa Paşa", "Köprülü Fazıl Ahmed Paşa", "Sokullu Mehmed Paşa", "Kara Mehmed Paşa"], correct: 0 },
+  { id: 90, topic: "Osmanlı Duraklama", q: "Kapitülasyonların Fransa'ya sürekli hale getirilmesi hangi padişah döneminde gerçekleşmiştir?", options: ["Kanuni Sultan Süleyman", "II. Selim", "III. Murad", "I. Ahmed"], correct: 2 },
+  { id: 91, topic: "Osmanlı Duraklama", q: "Karlofça Antlaşması öncesinde Osmanlı Devleti'nin Avrupalı devletlerle giriştiği uzun savaşlar dönemine ne ad verilir?", options: ["Kutsal İttifak Savaşları", "Haçlı Seferleri", "Uzun Savaş", "Otuz Yıl Savaşları"], correct: 0 },
+
+  // --- Osmanlı Gerileme (+6) ---
+  { id: 92, topic: "Osmanlı Gerileme", q: "Osmanlı Devleti'nde ilk kez padişahın yetkilerini sınırlayan belge hangisidir?", options: ["Sened-i İttifak", "Tanzimat Fermanı", "Islahat Fermanı", "Kanun-i Esasi"], correct: 0 },
+  { id: 93, topic: "Osmanlı Gerileme", q: "III. Selim döneminde Batı tarzında kurulan yeni ordunun adı nedir?", options: ["Nizam-ı Cedid", "Asakir-i Mansure-i Muhammediye", "Sekban-ı Cedid", "Eşkinci Ocağı"], correct: 0 },
+  { id: 94, topic: "Osmanlı Gerileme", q: "III. Selim'i tahttan indiren isyan hangisidir?", options: ["Patrona Halil İsyanı", "Kabakçı Mustafa İsyanı", "Kuyucu Murad İsyanı", "Celali İsyanları"], correct: 1 },
+  { id: 95, topic: "Osmanlı Gerileme", q: "Osmanlı Devleti'nin Rusya ile imzaladığı ve Kırım'ın kaybını kesinleştiren antlaşma hangisidir?", options: ["Küçük Kaynarca Antlaşması", "Yaş Antlaşması", "Bükreş Antlaşması", "Edirne Antlaşması"], correct: 1 },
+  { id: 96, topic: "Osmanlı Gerileme", q: "Yunanistan'ın bağımsızlığını kazandığı antlaşma hangisidir?", options: ["Edirne Antlaşması", "Bükreş Antlaşması", "Londra Antlaşması", "Paris Antlaşması"], correct: 0 },
+  { id: 97, topic: "Osmanlı Gerileme", q: "Osmanlı Devleti'nin Avusturya ile 1791 yılında imzaladığı ve toprak kaybı yaşanmayan antlaşma hangisidir?", options: ["Ziştovi Antlaşması", "Karlofça Antlaşması", "Pasarofça Antlaşması", "Belgrad Antlaşması"], correct: 0 },
+
+  // --- Islahatlar (+7) ---
+  { id: 98, topic: "Islahatlar", q: "Osmanlı Devleti'nde çıkarılan ilk resmi gazete hangisidir?", options: ["Takvim-i Vekayi", "Tercüman-ı Ahval", "Tasvir-i Efkar", "Ceride-i Havadis"], correct: 0 },
+  { id: 99, topic: "Islahatlar", q: "Tanzimat sonrasında hazırlanan ve ilk Türk medeni kanunu niteliği taşıyan eser hangisidir?", options: ["Mecelle", "Kanun-i Esasi", "Islahat Fermanı", "Tanzimat Fermanı"], correct: 0 },
+  { id: 100, topic: "Islahatlar", q: "Kanun-i Esasi'nin ilanıyla birlikte başlayan meşrutiyet dönemi hangisidir?", options: ["I. Meşrutiyet", "II. Meşrutiyet", "III. Meşrutiyet", "Cumhuriyet"], correct: 0 },
+  { id: 101, topic: "Islahatlar", q: "II. Meşrutiyet hangi yıl ilan edilmiştir?", options: ["1876", "1908", "1909", "1912"], correct: 1 },
+  { id: 102, topic: "Islahatlar", q: "II. Meşrutiyet'e karşı çıkan ve Hareket Ordusu tarafından bastırılan isyan hangisidir?", options: ["31 Mart Vakası", "Kabakçı Mustafa İsyanı", "Patrona Halil İsyanı", "Şeyh Said İsyanı"], correct: 0 },
+  { id: 103, topic: "Islahatlar", q: "Osmanlı Devleti'nin dış borçlarını yönetmek amacıyla kurulan ve devlet gelirlerinin bir kısmına el koyan kurum hangisidir?", options: ["Duyun-u Umumiye", "Reji İdaresi", "Osmanlı Bankası", "Ziraat Bankası"], correct: 0 },
+  { id: 104, topic: "Islahatlar", q: "II. Mahmud döneminde kıyafet düzenlemesiyle memurlara giydirilen başlık hangisidir?", options: ["Fes", "Kalpak", "Sarık", "Külah"], correct: 0 },
+
+  // --- Osmanlı Dağılma (+7) ---
+  { id: 105, topic: "Osmanlı Dağılma", q: "1877-1878 Osmanlı-Rus Savaşı (93 Harbi) sonunda imzalanan ve Osmanlı'ya ağır kayıplar getiren antlaşma hangisidir?", options: ["Ayastefanos Antlaşması", "Berlin Antlaşması", "Bükreş Antlaşması", "Edirne Antlaşması"], correct: 0 },
+  { id: 106, topic: "Osmanlı Dağılma", q: "Balkan Savaşları sonucunda Edirne'nin geri alındığı savaş hangisidir?", options: ["I. Balkan Savaşı", "II. Balkan Savaşı", "Trablusgarp Savaşı", "Kırım Savaşı"], correct: 1 },
+  { id: 107, topic: "Osmanlı Dağılma", q: "İttihat ve Terakki Cemiyeti'nin iktidarı ele geçirdiği baskın hangisidir?", options: ["Bab-ı Ali Baskını", "31 Mart Vakası", "Kabakçı Mustafa İsyanı", "Balkan Baskını"], correct: 0 },
+  { id: 108, topic: "Osmanlı Dağılma", q: "Osmanlı Devleti I. Dünya Savaşı'na hangi olayla fiilen girmiştir?", options: ["Goben ve Breslav'ın (Yavuz-Midilli) Karadeniz'deki Rus limanlarını bombalaması", "Çanakkale Kuşatması", "Sarıkamış Harekatı", "Kanal Seferi"], correct: 0 },
+  { id: 109, topic: "Osmanlı Dağılma", q: "I. Dünya Savaşı'nda Osmanlı ordusunun İngilizlere karşı önemli bir zafer kazandığı olay hangisidir?", options: ["Kut'ül Amare Zaferi", "Çanakkale Savaşı", "Sarıkamış Harekatı", "Kanal Seferi"], correct: 0 },
+  { id: 110, topic: "Osmanlı Dağılma", q: "Çanakkale Cephesi'nin Osmanlı Devleti açısından en önemli sonucu aşağıdakilerden hangisidir?", options: ["İstanbul'un işgalden korunması ve İtilaf Devletleri'nin Rusya'ya yardımının engellenmesi", "Kafkasya'nın işgalden kurtarılması", "Süveyş Kanalı'nın ele geçirilmesi", "Filistin'in savunulması"], correct: 0 },
+  { id: 111, topic: "Osmanlı Dağılma", q: "ABD Başkanı Wilson'ın, azınlıklara kendi geleceklerini belirleme hakkı tanıyan ilkeleri hangi isimle bilinir?", options: ["Wilson İlkeleri", "Monroe Doktrini", "Truman Doktrini", "Sykes-Picot Antlaşması"], correct: 0 },
+
+  // --- Milli Mücadele (+3) ---
+  { id: 112, topic: "Milli Mücadele", q: "Milli Mücadele'nin ilk yazılı belgesi kabul edilen genelge hangisidir?", options: ["Amasya Genelgesi", "Havza Genelgesi", "Erzurum Kongresi Kararları", "Misak-ı Milli"], correct: 0 },
+  { id: 113, topic: "Milli Mücadele", q: "'Milli sınırlar' ifadesinin ilk kez kullanıldığı toplantı hangisidir?", options: ["Erzurum Kongresi", "Sivas Kongresi", "Amasya Görüşmesi", "TBMM'nin açılışı"], correct: 0 },
+  { id: 114, topic: "Milli Mücadele", q: "Mustafa Kemal'e 'Gazilik' ve 'Mareşallik' unvanlarının verilmesine neden olan savaş hangisidir?", options: ["I. İnönü Savaşı", "II. İnönü Savaşı", "Sakarya Meydan Muharebesi", "Büyük Taarruz"], correct: 2 },
+
+  // --- İnkılaplar (+6) ---
+  { id: 115, topic: "İnkılaplar", q: "Saltanatın kaldırılması hangi tarihte gerçekleşmiştir?", options: ["1 Kasım 1922", "3 Mart 1924", "29 Ekim 1923", "17 Şubat 1926"], correct: 0 },
+  { id: 116, topic: "İnkılaplar", q: "Ankara, Türkiye Cumhuriyeti'nin başkenti hangi tarihte ilan edilmiştir?", options: ["23 Nisan 1920", "13 Ekim 1923", "29 Ekim 1923", "20 Nisan 1924"], correct: 1 },
+  { id: 117, topic: "İnkılaplar", q: "Türk Medeni Kanunu hangi ülkeden alınarak 1926'da kabul edilmiştir?", options: ["Fransa", "İsviçre", "İtalya", "Almanya"], correct: 1 },
+  { id: 118, topic: "İnkılaplar", q: "Tekke, zaviye ve türbelerin kapatılması hangi yıl gerçekleşmiştir?", options: ["1924", "1925", "1926", "1928"], correct: 1 },
+  { id: 119, topic: "İnkılaplar", q: "Soyadı Kanunu hangi yıl kabul edilmiştir?", options: ["1930", "1933", "1934", "1935"], correct: 2 },
+  { id: 120, topic: "İnkılaplar", q: "Şapka İnkılabı hangi yıl gerçekleştirilmiştir?", options: ["1923", "1924", "1925", "1926"], correct: 2 },
+  // --- İslamiyet Öncesi (+20, toplam 30) ---
+  { id: 121, topic: "İslamiyet Öncesi", q: "Türklerin bilinen ana yurdu neresidir?", options: ["Orta Asya", "Anadolu", "Mezopotamya", "Kafkasya"], correct: 0 },
+  { id: 122, topic: "İslamiyet Öncesi", q: "Asya Hun Devleti'nin başkenti neresidir?", options: ["Ötüken", "Karakurum", "Semerkant", "Balasagun"], correct: 0 },
+  { id: 123, topic: "İslamiyet Öncesi", q: "751 yılındaki Talas Savaşı'nda Araplara yardım ederek Çin'e karşı savaşan Türk boyu hangisidir?", options: ["Karluklar", "Kimekler", "Peçenekler", "Uygurlar"], correct: 0 },
+  { id: 124, topic: "İslamiyet Öncesi", q: "Türklerde hükümdara yönetme yetkisinin Gök Tanrı tarafından verildiğine inanılan anlayışa ne ad verilir?", options: ["Kut Anlayışı", "Meşveret", "Töre", "Kurultay"], correct: 0 },
+  { id: 125, topic: "İslamiyet Öncesi", q: "Musevilik dinini kabul eden Türk devleti hangisidir?", options: ["Hazarlar", "Avarlar", "Bulgarlar", "Peçenekler"], correct: 0 },
+  { id: 126, topic: "İslamiyet Öncesi", q: "Avrupa'da kurulan ve İstanbul'u ilk kez kuşatan Türk devleti hangisidir?", options: ["Avarlar", "Hazarlar", "Bulgarlar", "Macarlar"], correct: 0 },
+  { id: 127, topic: "İslamiyet Öncesi", q: "Uygur Devleti hangi Türk topluluğu tarafından yıkılmıştır?", options: ["Kırgızlar", "Karluklar", "Oğuzlar", "Kimekler"], correct: 0 },
+  { id: 128, topic: "İslamiyet Öncesi", q: "Göktürk Kağanlığı'nı kuran hükümdar kimdir?", options: ["Bumin Kağan", "Kutluk Kağan", "Bilge Kağan", "Mete Han"], correct: 0 },
+  { id: 129, topic: "İslamiyet Öncesi", q: "Göktürk Devleti'nin batısını yöneterek Sasanilerle iş birliği yapıp Akhunları yıkan hükümdar kimdir?", options: ["İstemi Yabgu", "Bumin Kağan", "Kutluk Kağan", "Tonyukuk"], correct: 0 },
+  { id: 130, topic: "İslamiyet Öncesi", q: "Çin esaretine karşı direnen Göktürk şehzadesi kimdir?", options: ["Kürşad", "Tonyukuk", "Bilge Kağan", "Kültigin"], correct: 0 },
+  { id: 131, topic: "İslamiyet Öncesi", q: "Türklerde ekonomik hayatın temelini oluşturan faaliyet aşağıdakilerden hangisidir?", options: ["Konar-göçer hayvancılık", "Tarım", "Madencilik", "Denizcilik"], correct: 0 },
+  { id: 132, topic: "İslamiyet Öncesi", q: "Türk sanatında hayvan figürlerinin stilize edilerek işlendiği sanat akımına ne ad verilir?", options: ["Hayvan Üslubu", "Minyatür Sanatı", "Rölyef Sanatı", "Fresk Sanatı"], correct: 0 },
+  { id: 133, topic: "İslamiyet Öncesi", q: "İdil (Volga) Bulgar Devleti hangi dini resmi din olarak kabul etmiştir?", options: ["İslamiyet", "Hristiyanlık", "Musevilik", "Gök Tanrı Dini"], correct: 0 },
+  { id: 134, topic: "İslamiyet Öncesi", q: "Tuna Bulgar Devleti hangi dini kabul ederek zamanla Slavlaşmıştır?", options: ["Hristiyanlık", "İslamiyet", "Musevilik", "Budizm"], correct: 0 },
+  { id: 135, topic: "İslamiyet Öncesi", q: "Askeri ve sivil hayatın iç içe olduğu, her Türk erkeğinin asker sayıldığı anlayışa ne ad verilir?", options: ["Ordu-Millet Anlayışı", "Kut Anlayışı", "Töre", "İkili Teşkilat"], correct: 0 },
+  { id: 136, topic: "İslamiyet Öncesi", q: "Türklerin örf ve adetlere dayanan yazılı olmayan hukuk kurallarına ne ad verilir?", options: ["Töre", "Kanunname", "Şeriat", "Yasa"], correct: 0 },
+  { id: 137, topic: "İslamiyet Öncesi", q: "Kavimler Göçü'nün sonuçlarından biri aşağıdakilerden hangisidir?", options: ["Roma İmparatorluğu'nun ikiye ayrılması", "İstanbul'un fethi", "Malazgirt Savaşı", "Talas Savaşı"], correct: 0 },
+  { id: 138, topic: "İslamiyet Öncesi", q: "Orhun Abideleri hangi hükümdarlar adına dikilmiştir?", options: ["Bilge Kağan, Kültigin ve Vezir Tonyukuk", "Bumin Kağan ve İstemi Yabgu", "Mete Han ve Kürşad", "Kutluk Kağan ve Bilge Kağan"], correct: 0 },
+  { id: 139, topic: "İslamiyet Öncesi", q: "Türklerde devlet meclisine ne ad verilirdi?", options: ["Kurultay (Toy)", "Divan", "Şura", "Meclis-i Mebusan"], correct: 0 },
+  { id: 140, topic: "İslamiyet Öncesi", q: "Bilge Kağan, Kültigin ve Tonyukuk anıtları hangi alfabeyle yazılmıştır?", options: ["Göktürk (Orhun) Alfabesi", "Uygur Alfabesi", "Arap Alfabesi", "Soğd Alfabesi"], correct: 0 },
+
+  // --- İlk Türk-İslam Devletleri (+20, toplam 30) ---
+  { id: 141, topic: "İlk Türk-İslam Devletleri", q: "Karahanlı Devleti hangi bölgede kurulmuştur?", options: ["Maveraünnehir ve Yedisu", "Mısır", "Horasan", "Azerbaycan"], correct: 0 },
+  { id: 142, topic: "İlk Türk-İslam Devletleri", q: "Gazneli Devleti'nin kurucusu kimdir?", options: ["Sebüktegin", "Alp Tegin", "Gazneli Mahmud", "Mesud"], correct: 0 },
+  { id: 143, topic: "İlk Türk-İslam Devletleri", q: "Gazneli Devleti, Selçuklulara yenilerek hangi savaş sonrası zayıflamaya başlamıştır?", options: ["Dandanakan Savaşı", "Katvan Savaşı", "Malazgirt Savaşı", "Pasinler Savaşı"], correct: 0 },
+  { id: 144, topic: "İlk Türk-İslam Devletleri", q: "Mısır'da kurulan ve Moğolları Ayn Calut Savaşı'nda durduran Türk-İslam devleti hangisidir?", options: ["Memlükler", "Eyyubiler", "Tolunoğulları", "Akşitler"], correct: 0 },
+  { id: 145, topic: "İlk Türk-İslam Devletleri", q: "Memlük Devleti'nin Moğolları durdurduğu savaş hangisidir?", options: ["Ayn Calut Savaşı", "Kösedağ Savaşı", "Mercidabık Savaşı", "Ridaniye Savaşı"], correct: 0 },
+  { id: 146, topic: "İlk Türk-İslam Devletleri", q: "Selahaddin Eyyubi tarafından kurulan ve Haçlılara karşı mücadele eden devlet hangisidir?", options: ["Eyyubiler", "Memlükler", "Tolunoğulları", "Zengiler"], correct: 0 },
+  { id: 147, topic: "İlk Türk-İslam Devletleri", q: "Moğol istilasına karşı Celaleddin liderliğinde direnen Türk-İslam devleti hangisidir?", options: ["Harzemşahlar", "Gazneliler", "Karahanlılar", "Memlükler"], correct: 0 },
+  { id: 148, topic: "İlk Türk-İslam Devletleri", q: "Atabetü'l Hakayık adlı eserin yazarı kimdir?", options: ["Edip Ahmed Yükneki", "Yusuf Has Hacib", "Kaşgarlı Mahmud", "Ahmed Yesevi"], correct: 0 },
+  { id: 149, topic: "İlk Türk-İslam Devletleri", q: "Askeri ve sivil erkana toprak geliri karşılığında görev verilmesi sistemine ne ad verilir?", options: ["İkta Sistemi", "Tımar Sistemi", "Divan Sistemi", "Ülüş Sistemi"], correct: 0 },
+  { id: 150, topic: "İlk Türk-İslam Devletleri", q: "Türk-İslam devletlerinde devlet işlerinin görüşüldüğü kurula ne ad verilir?", options: ["Divan", "Kurultay", "Meclis", "Şura"], correct: 0 },
+  { id: 151, topic: "İlk Türk-İslam Devletleri", q: "Karahanlı hükümdarlarının kullandığı unvan aşağıdakilerden hangisidir?", options: ["Kağan/Hakan", "Sultan", "Halife", "Şah"], correct: 0 },
+  { id: 152, topic: "İlk Türk-İslam Devletleri", q: "Karahanlı mimarisinin özgün mezar anıtı niteliğindeki yapılarına ne ad verilir?", options: ["Kümbet", "Külliye", "İmaret", "Medrese"], correct: 0 },
+  { id: 153, topic: "İlk Türk-İslam Devletleri", q: "Büyük Selçuklu Devleti kurulmadan önce Oğuzların İslamiyeti kabul etmesine öncülük eden bey kimdir?", options: ["Selçuk Bey", "Tuğrul Bey", "Çağrı Bey", "Alparslan"], correct: 0 },
+  { id: 154, topic: "İlk Türk-İslam Devletleri", q: "Memlük Devleti'nde Abbasi halifeliğinin sembolik olarak (gölge halife) devam ettirilmesi hangi olaydan sonra başlamıştır?", options: ["Bağdat'taki Abbasi Devleti'nin Moğollar tarafından yıkılması", "Selçuklu Devleti'nin yıkılması", "Endülüs Emevi Devleti'nin yıkılması", "Gazneli Devleti'nin yıkılması"], correct: 0 },
+  { id: 155, topic: "İlk Türk-İslam Devletleri", q: "Tolunoğulları Devleti'ni kuran kişi kimdir?", options: ["Ahmed b. Tolun", "Humaraveyh", "Kafur", "İhşid"], correct: 0 },
+  { id: 156, topic: "İlk Türk-İslam Devletleri", q: "Akşit (İhşidi) Devleti'ni kuran kişi kimdir?", options: ["Muhammed b. Tuğç", "Ahmed b. Tolun", "Kafur", "Baybars"], correct: 0 },
+  { id: 157, topic: "İlk Türk-İslam Devletleri", q: "Memlük Devleti'nin, Haçlı ve Moğol tehdidine karşı başarılı mücadeleler veren güçlü sultanı kimdir?", options: ["Baybars", "Kutuz", "Kalavun", "Berkuk"], correct: 0 },
+  { id: 158, topic: "İlk Türk-İslam Devletleri", q: "Halife tarafından Gazneli Mahmud'a verilen 'Sultan' unvanının anlamı nedir?", options: ["İslam dünyasının siyasi ve askeri lideri", "Halifenin vekili", "Din adamı", "Vezir"], correct: 0 },
+  { id: 159, topic: "İlk Türk-İslam Devletleri", q: "Karahanlı Devleti'nin ikiye ayrılmasında etkili olan yönetim biçimi hangisidir?", options: ["İkili Teşkilat (Doğu-Batı Kağanlığı)", "Atabeylik", "Meliklik", "Sultanlık"], correct: 0 },
+  { id: 160, topic: "İlk Türk-İslam Devletleri", q: "Türk-İslam tarihinde bilinen ilk Türkçe-Arapça sözlüğü kim yazmıştır?", options: ["Kaşgarlı Mahmud", "Yusuf Has Hacib", "Ahmed Yesevi", "Edip Ahmed Yükneki"], correct: 0 },
+
+  // --- Büyük Selçuklu (+20, toplam 30) ---
+  { id: 161, topic: "Büyük Selçuklu", q: "Malazgirt Savaşı'nda esir düşen Bizans İmparatoru kimdir?", options: ["Romen Diyojen", "I. Aleksios", "Herakleios", "Andronikos"], correct: 0 },
+  { id: 162, topic: "Büyük Selçuklu", q: "Büyük Selçuklu Devleti'nde ilk kez 'Sultan' unvanını kullanan hükümdar kimdir?", options: ["Tuğrul Bey", "Çağrı Bey", "Alparslan", "Melikşah"], correct: 0 },
+  { id: 163, topic: "Büyük Selçuklu", q: "Alparslan ve Melikşah dönemlerinde vezirlik yapan, 'Siyasetname' adlı eseri yazan devlet adamı kimdir?", options: ["Nizamülmülk", "Ömer Hayyam", "Kaşgarlı Mahmud", "Tonyukuk"], correct: 0 },
+  { id: 164, topic: "Büyük Selçuklu", q: "Nizamülmülk hangi tarikat mensupları tarafından suikaste uğrayarak öldürülmüştür?", options: ["Bâtınîler (İsmaililer)", "Sünniler", "Şafiiler", "Hanefiler"], correct: 0 },
+  { id: 165, topic: "Büyük Selçuklu", q: "Alamut Kalesi'ni merkez edinerek Büyük Selçuklu'yu içten zayıflatan Bâtıni hareketinin lideri kimdir?", options: ["Hasan Sabbah", "Nizamülmülk", "Ömer Hayyam", "Sencer"], correct: 0 },
+  { id: 166, topic: "Büyük Selçuklu", q: "Malazgirt Savaşı'ndan sonra Anadolu'nun fethi görevini Alparslan kimlere bırakmıştır?", options: ["Türkmen beylerine", "Bizans valilerine", "Halifeye", "Nizamülmülk'e"], correct: 0 },
+  { id: 167, topic: "Büyük Selçuklu", q: "Melikşah'ın ölümünden sonra Büyük Selçuklu Devleti'nde ortaya çıkan durum aşağıdakilerden hangisidir?", options: ["Taht kavgaları ve devletin parçalanma sürecine girmesi", "Devletin en güçlü dönemini yaşaması", "Anadolu'nun tamamen kaybedilmesi", "Bağdat'ın işgali"], correct: 0 },
+  { id: 168, topic: "Büyük Selçuklu", q: "Merkezî otoritenin zayıflamasıyla ortaya çıkan ve Selçuklu ailesine mensup meliklerin yönettiği şubelere ne ad verilir?", options: ["Selçuklu şubeleri (Irak, Suriye, Kirman Selçukluları)", "Beylikler", "Kağanlıklar", "Hanedanlıklar"], correct: 0 },
+  { id: 169, topic: "Büyük Selçuklu", q: "Selçuklularda hanedan üyelerinin ülkeyi hanedanın ortak malı sayması anlayışına ne ad verilir?", options: ["Ülüş Sistemi (Hanedan Anlayışı)", "Kut Anlayışı", "İkta Sistemi", "Atabeylik"], correct: 0 },
+  { id: 170, topic: "Büyük Selçuklu", q: "Askeri ve sivil görevlilere hizmetleri karşılığında toprak gelirinin verilmesi sistemine ne ad verilir?", options: ["İkta Sistemi", "Tımar Sistemi", "Divan Sistemi", "Kut Sistemi"], correct: 0 },
+  { id: 171, topic: "Büyük Selçuklu", q: "Çağrı Bey'in Anadolu'ya yaptığı ilk keşif seferleri hangi amaçla yapılmıştır?", options: ["Anadolu'nun coğrafi ve askeri durumunu incelemek", "Bizans'ı fethetmek", "Haçlıları durdurmak", "İstanbul'u kuşatmak"], correct: 0 },
+  { id: 172, topic: "Büyük Selçuklu", q: "Melikşah döneminde bilim ve sanata verilen önemin en somut göstergesi aşağıdakilerden hangisidir?", options: ["Nizamiye Medreseleri ve Celali Takvimi'nin hazırlanması", "Kervansarayların yıkılması", "Divan edebiyatının sona ermesi", "Ordunun küçültülmesi"], correct: 0 },
+  { id: 173, topic: "Büyük Selçuklu", q: "Büyük Selçuklu Devleti'nde ordunun temelini oluşturan, saraya bağlı ücretli askerlere ne ad verilir?", options: ["Gulaman-ı Saray", "Yeniçeri", "Sipahi", "Akıncı"], correct: 0 },
+  { id: 174, topic: "Büyük Selçuklu", q: "Tuğrul Bey'in Bağdat'a girerek Şii Büveyhoğulları'nın etkisine son vermesinin sonucu nedir?", options: ["Sünni halifeliğin koruyuculuğunu Selçukluların üstlenmesi", "Halifeliğin kaldırılması", "Şiiliğin resmi mezhep olması", "Bağdat'ın başkent olması"], correct: 0 },
+  { id: 175, topic: "Büyük Selçuklu", q: "Malazgirt Zaferi'nin en önemli sonucu aşağıdakilerden hangisidir?", options: ["Anadolu kapılarının Türklere açılması", "Bizans'ın yıkılması", "Haçlı Seferleri'nin sona ermesi", "İstanbul'un fethedilmesi"], correct: 0 },
+  { id: 176, topic: "Büyük Selçuklu", q: "Malazgirt Savaşı'nın Avrupa'daki en önemli sonucu nedir?", options: ["Haçlı Seferleri'nin başlamasına zemin hazırlaması", "Bizans'ın güçlenmesi", "Papalığın etkisini kaybetmesi", "Endülüs'ün fethi"], correct: 0 },
+  { id: 177, topic: "Büyük Selçuklu", q: "Sultan Sencer döneminde zayıflamaya neden olan başlıca iç sorun aşağıdakilerden hangisidir?", options: ["Oğuz (Türkmen) isyanları", "Bâtıni ayaklanmaları", "Haçlı saldırıları", "Bizans işgalleri"], correct: 0 },
+  { id: 178, topic: "Büyük Selçuklu", q: "Büyük Selçuklu Devleti'nde şer'i davalara bakan görevliye ne ad verilir?", options: ["Kadı", "Vezir", "Atabey", "Divan-ı Arz"], correct: 0 },
+  { id: 179, topic: "Büyük Selçuklu", q: "Melikşah döneminde toprak gelirlerinin tespit edilip yazıldığı maliye divanına ne ad verilir?", options: ["Divan-ı İstifa", "Divan-ı Arz", "Divan-ı İnşa", "Divan-ı İşraf"], correct: 0 },
+  { id: 180, topic: "Büyük Selçuklu", q: "Büyük Selçuklu Devleti'nin ilk başkenti neresidir?", options: ["Nişabur", "İsfahan", "Rey", "Merv"], correct: 0 },
+
+  // --- Anadolu Selçuklu (+20, toplam 30) ---
+  { id: 181, topic: "Anadolu Selçuklu", q: "II. Kılıçarslan'ın Bizans'a karşı büyük bir zafer kazandığı ve Anadolu'nun kesin Türk yurdu olduğunun kanıtlandığı savaş hangisidir?", options: ["Miryokefalon Savaşı", "Malazgirt Savaşı", "Kösedağ Savaşı", "Yassıçemen Savaşı"], correct: 0 },
+  { id: 182, topic: "Anadolu Selçuklu", q: "II. Kılıçarslan'ın ülke topraklarını 11 oğlu arasında paylaştırmasının sonucu nedir?", options: ["Taht kavgaları ve iç karışıklıkların başlaması", "Devletin güçlenmesi", "Haçlı Seferleri'nin sona ermesi", "Başkentin değişmesi"], correct: 0 },
+  { id: 183, topic: "Anadolu Selçuklu", q: "Alanya'yı (Alaiye) fethederek kışlık liman ve tersane haline getiren hükümdar kimdir?", options: ["I. Alaeddin Keykubad", "II. Kılıçarslan", "I. Gıyaseddin Keyhüsrev", "II. Gıyaseddin Keyhüsrev"], correct: 0 },
+  { id: 184, topic: "Anadolu Selçuklu", q: "I. Alaeddin Keykubad'ın Harzemşahlara karşı kazandığı savaş hangisidir?", options: ["Yassıçemen Savaşı", "Miryokefalon Savaşı", "Kösedağ Savaşı", "Malazgirt Savaşı"], correct: 0 },
+  { id: 185, topic: "Anadolu Selçuklu", q: "Kösedağ Savaşı hangi hükümdar döneminde yaşanmıştır?", options: ["II. Gıyaseddin Keyhüsrev", "I. Alaeddin Keykubad", "II. Kılıçarslan", "I. Gıyaseddin Keyhüsrev"], correct: 0 },
+  { id: 186, topic: "Anadolu Selçuklu", q: "II. Gıyaseddin Keyhüsrev döneminde Baba İshak liderliğinde çıkan ve devletin zayıflamasına katkı sağlayan isyan hangisidir?", options: ["Babailer İsyanı", "Şeyh Bedreddin İsyanı", "Celali İsyanları", "Bâtıni İsyanı"], correct: 0 },
+  { id: 187, topic: "Anadolu Selçuklu", q: "Türkiye Selçuklu Devleti'nin siyasi varlığı fiilen hangi dönemde sona ermiştir?", options: ["14. yüzyılın başları", "12. yüzyıl", "13. yüzyılın ortası", "15. yüzyıl"], correct: 0 },
+  { id: 188, topic: "Anadolu Selçuklu", q: "'Mesnevi' adlı eseriyle tanınan, Konya'da yaşamış büyük mutasavvıf kimdir?", options: ["Mevlana Celaleddin Rumi", "Yunus Emre", "Hacı Bektaş Veli", "Ahi Evran"], correct: 0 },
+  { id: 189, topic: "Anadolu Selçuklu", q: "Anadolu'da Türkçe tasavvufi şiirleriyle halka İslamiyeti sevdiren şair kimdir?", options: ["Yunus Emre", "Mevlana", "Hacı Bektaş Veli", "Ahmed Yesevi"], correct: 0 },
+  { id: 190, topic: "Anadolu Selçuklu", q: "Bektaşilik tarikatının kurucusu olarak kabul edilen mutasavvıf kimdir?", options: ["Hacı Bektaş Veli", "Mevlana", "Yunus Emre", "Ahi Evran"], correct: 0 },
+  { id: 191, topic: "Anadolu Selçuklu", q: "Aksaray yakınlarında bulunan, dönemin en büyük kervansaraylarından biri olan yapı hangisidir?", options: ["Sultanhanı Kervansarayı", "Karatay Hanı", "Ağzıkarahan", "Alara Han"], correct: 0 },
+  { id: 192, topic: "Anadolu Selçuklu", q: "Sivas'ta bulunan Selçuklu dönemi medreselerinden biri hangisidir?", options: ["Gök Medrese", "Karatay Medresesi", "Sahip Ata Külliyesi", "İnce Minareli Medrese"], correct: 0 },
+  { id: 193, topic: "Anadolu Selçuklu", q: "Divriği Ulu Camii ve Darüşşifası hangi Türk beyliği döneminde inşa edilmiştir?", options: ["Mengücekliler", "Danişmendliler", "Saltuklular", "Artuklular"], correct: 0 },
+  { id: 194, topic: "Anadolu Selçuklu", q: "Anadolu'da Haçlı Seferleri'ne karşı en çok mücadele eden beyliklerden biri hangisidir?", options: ["Danişmendliler", "Saltuklular", "Çaka Beyliği", "Mengücekliler"], correct: 0 },
+  { id: 195, topic: "Anadolu Selçuklu", q: "Erzurum çevresinde kurulan ilk Anadolu Türk beyliklerinden biri hangisidir?", options: ["Saltuklular", "Danişmendliler", "Artuklular", "Mengücekliler"], correct: 0 },
+  { id: 196, topic: "Anadolu Selçuklu", q: "Diyarbakır ve çevresinde kurulan, mimari eserleriyle tanınan Türk beyliği hangisidir?", options: ["Artuklular", "Saltuklular", "Danişmendliler", "Çaka Beyliği"], correct: 0 },
+  { id: 197, topic: "Anadolu Selçuklu", q: "Askeri ve sivil görevlilere hizmet karşılığı toprak geliri verilmesi sistemine ne ad verilir?", options: ["İkta Sistemi", "Tımar Sistemi", "Divan-ı Arz", "Ülüş Sistemi"], correct: 0 },
+  { id: 198, topic: "Anadolu Selçuklu", q: "Tüccarların mallarının devlet güvencesi altına alınması (sigortalanması) uygulaması hangi hükümdar döneminde yaygınlaşmıştır?", options: ["I. Alaeddin Keykubad", "II. Kılıçarslan", "Süleyman Şah", "I. Mesud"], correct: 0 },
+  { id: 199, topic: "Anadolu Selçuklu", q: "Konya'da bulunan, taş işçiliğiyle tanınan Selçuklu dönemi medresesi hangisidir?", options: ["İnce Minareli Medrese", "Gök Medrese", "Çifte Minareli Medrese", "Yakutiye Medresesi"], correct: 0 },
+  { id: 200, topic: "Anadolu Selçuklu", q: "Türkiye Selçuklu Devleti'nin Moğollara bağlı hale gelmesi hangi savaş sonrasında gerçekleşmiştir?", options: ["Kösedağ Savaşı", "Miryokefalon Savaşı", "Yassıçemen Savaşı", "Malazgirt Savaşı"], correct: 0 },
+
+  // --- Osmanlı Kuruluş (+20, toplam 30) ---
+  { id: 201, topic: "Osmanlı Kuruluş", q: "Osmanlı Devleti'nin kurulduğu bölgeye ilk yerleşen ve Osman Gazi'nin babası olan bey kimdir?", options: ["Ertuğrul Gazi", "Süleyman Şah", "Gündüz Alp", "Savcı Bey"], correct: 0 },
+  { id: 202, topic: "Osmanlı Kuruluş", q: "Osmanlı Beyliği ilk olarak hangi bölgede kurulmuştur?", options: ["Söğüt ve Domaniç", "Bursa ve İznik", "Edirne ve Gelibolu", "Konya ve Karaman"], correct: 0 },
+  { id: 203, topic: "Osmanlı Kuruluş", q: "I. Murad döneminde Haçlılara karşı kazanılan ilk büyük zafer hangisidir?", options: ["Sırpsındığı Savaşı", "Niğbolu Savaşı", "Varna Savaşı", "II. Kosova Savaşı"], correct: 0 },
+  { id: 204, topic: "Osmanlı Kuruluş", q: "I. Murad döneminde Bulgar ve Sırp kuvvetlerine karşı kazanılan savaş hangisidir?", options: ["Çirmen Savaşı", "Niğbolu Savaşı", "Varna Savaşı", "Ankara Savaşı"], correct: 0 },
+  { id: 205, topic: "Osmanlı Kuruluş", q: "I. Murad'dan sonra tahta geçen ve Niğbolu Savaşı'nı kazanan padişah kimdir?", options: ["Yıldırım Bayezid", "I. Mehmed", "II. Murad", "Orhan Gazi"], correct: 0 },
+  { id: 206, topic: "Osmanlı Kuruluş", q: "Yıldırım Bayezid'e 'Yıldırım' unvanının pekiştiği savaş hangisidir?", options: ["Niğbolu Savaşı", "Ankara Savaşı", "Kosova Savaşı", "Çirmen Savaşı"], correct: 0 },
+  { id: 207, topic: "Osmanlı Kuruluş", q: "Fetret Devri'ni sona erdirerek Osmanlı birliğini yeniden sağlayan padişah kimdir?", options: ["I. Mehmed (Çelebi Mehmed)", "II. Murad", "Yıldırım Bayezid", "Musa Çelebi"], correct: 0 },
+  { id: 208, topic: "Osmanlı Kuruluş", q: "II. Murad döneminde çıkan ve dini-sosyal bir isyan niteliği taşıyan isyan hangisidir?", options: ["Şeyh Bedreddin İsyanı", "Babailer İsyanı", "Kabakçı Mustafa İsyanı", "Patrona Halil İsyanı"], correct: 0 },
+  { id: 209, topic: "Osmanlı Kuruluş", q: "II. Murad'ın Haçlılara karşı kazandığı ve Balkanlardaki varlığı güvence altına alan savaş hangisidir?", options: ["Varna Savaşı", "Niğbolu Savaşı", "Sırpsındığı Savaşı", "Ankara Savaşı"], correct: 0 },
+  { id: 210, topic: "Osmanlı Kuruluş", q: "II. Murad'ın tahttan çekilerek yerine geçirdiği, ancak Haçlı tehdidi üzerine tekrar tahta döndüğü padişah kimdir?", options: ["II. Mehmed (Fatih)", "I. Mehmed", "Yıldırım Bayezid", "Orhan Gazi"], correct: 0 },
+  { id: 211, topic: "Osmanlı Kuruluş", q: "II. Murad'ın ikinci kez tahta dönüşünden sonra kazanılan savaş hangisidir?", options: ["II. Kosova Savaşı", "Varna Savaşı", "Niğbolu Savaşı", "Ankara Savaşı"], correct: 0 },
+  { id: 212, topic: "Osmanlı Kuruluş", q: "Askeri-sivil görevlilere hizmet karşılığı toprak geliri verilmesini sağlayan sistem hangisidir?", options: ["Tımar Sistemi", "İkta Sistemi", "Divan Sistemi", "Kapıkulu Sistemi"], correct: 0 },
+  { id: 213, topic: "Osmanlı Kuruluş", q: "Divan-ı Hümayun ilk olarak hangi padişah döneminde kurulmuştur?", options: ["Orhan Gazi", "Osman Gazi", "I. Murad", "Yıldırım Bayezid"], correct: 0 },
+  { id: 214, topic: "Osmanlı Kuruluş", q: "Osmanlı Beyliği'nin diğer Anadolu beylikleri arasından sıyrılmasında en önemli avantaj aşağıdakilerden hangisidir?", options: ["Bizans sınırında uç beyliği olması", "Başkentinin Konya'ya yakın olması", "Denizcilikte ileri olması", "Moğol baskısından uzak olması"], correct: 0 },
+  { id: 215, topic: "Osmanlı Kuruluş", q: "Osmanlıların ilk deniz gücünü kazanmasında etkili olan ve topraklarına kattıkları beylik hangisidir?", options: ["Karesioğulları Beyliği", "Candaroğulları", "Germiyanoğulları", "Karamanoğulları"], correct: 0 },
+  { id: 216, topic: "Osmanlı Kuruluş", q: "Ankara Savaşı sonrasında Anadolu'da ne gibi bir gelişme yaşanmıştır?", options: ["Daha önce Osmanlı'ya katılan beylikler yeniden bağımsızlıklarını ilan etmiştir", "Osmanlı Devleti güçlenerek Anadolu birliğini sağlamıştır", "Bizans Anadolu'yu tamamen geri almıştır", "Karamanoğulları Osmanlı'ya katılmıştır"], correct: 0 },
+  { id: 217, topic: "Osmanlı Kuruluş", q: "Yıldırım Bayezid, boğaz kontrolünü güçlendirmek amacıyla hangi eseri yaptırmıştır?", options: ["Anadolu Hisarı", "Rumeli Hisarı", "Topkapı Sarayı", "Yedikule Hisarı"], correct: 0 },
+  { id: 218, topic: "Osmanlı Kuruluş", q: "Osman Gazi'nin komşu beyliklerle ilişkilerinde izlediği politika aşağıdakilerden hangisidir?", options: ["Gaza ve cihat anlayışıyla Bizans topraklarına yönelmek", "Anadolu beylikleriyle sürekli savaşmak", "Moğollarla ittifak kurmak", "Denizcilikle uğraşmak"], correct: 0 },
+  { id: 219, topic: "Osmanlı Kuruluş", q: "Osmanlı Devleti'nde ilk kez bastırılan para (akçe) hangi padişah döneminde çıkarılmıştır?", options: ["Orhan Gazi", "Osman Gazi", "I. Murad", "Yıldırım Bayezid"], correct: 0 },
+  { id: 220, topic: "Osmanlı Kuruluş", q: "Musa Çelebi, İsa Çelebi ve Süleyman Çelebi arasındaki taht mücadeleleri hangi döneme aittir?", options: ["Fetret Devri", "Duraklama Dönemi", "Kuruluş Dönemi'nin ilk yılları", "Yükselme Dönemi"], correct: 0 },
+
+  // --- Osmanlı Yükselme (+20, toplam 30) ---
+  { id: 221, topic: "Osmanlı Yükselme", q: "Fatih Sultan Mehmed'in hazırlattığı, kardeş katlini de içeren kanunlara ne ad verilir?", options: ["Kanunname-i Ali Osman", "Kanun-i Esasi", "Mecelle", "Tanzimat Fermanı"], correct: 0 },
+  { id: 222, topic: "Osmanlı Yükselme", q: "İstanbul'un fethi, hangi çağın kapanıp hangi çağın başlangıcı olarak kabul edilir?", options: ["Ortaçağ'ın kapanıp Yeniçağ'ın başlaması", "İlkçağ'ın kapanması", "Yeniçağ'ın kapanıp Yakınçağ'ın başlaması", "Bir değişiklik yaratmamıştır"], correct: 0 },
+  { id: 223, topic: "Osmanlı Yükselme", q: "Fatih döneminde Kırım'ın Osmanlı'ya bağlanmasının en önemli sonucu aşağıdakilerden hangisidir?", options: ["Karadeniz'in bir Türk gölü haline gelmesi", "Akdeniz ticaretinin ele geçirilmesi", "İstanbul'un fethi", "Kıbrıs'ın alınması"], correct: 0 },
+  { id: 224, topic: "Osmanlı Yükselme", q: "II. Bayezid döneminde tahtı ele geçirmek için Avrupa'ya sığınan ve Osmanlı'ya baskı unsuru olarak kullanılan şehzade kimdir?", options: ["Cem Sultan", "Şehzade Mustafa", "Şehzade Bayezid", "Şehzade Selim"], correct: 0 },
+  { id: 225, topic: "Osmanlı Yükselme", q: "Yavuz Sultan Selim'in Safevi Devleti'ne karşı kazandığı savaş hangisidir?", options: ["Çaldıran Savaşı", "Mercidabık Savaşı", "Ridaniye Savaşı", "Otlukbeli Savaşı"], correct: 0 },
+  { id: 226, topic: "Osmanlı Yükselme", q: "Yavuz Sultan Selim'in Mercidabık ve Ridaniye savaşlarını kazanmasının en önemli sonucu nedir?", options: ["Halifeliğin Osmanlı padişahlarına geçmesi", "Kıbrıs'ın fethi", "Rodos'un fethi", "Bağdat'ın alınması"], correct: 0 },
+  { id: 227, topic: "Osmanlı Yükselme", q: "Kanuni döneminde fethedilerek Akdeniz'de Osmanlı deniz gücünün önündeki büyük engel ortadan kaldırılan ada hangisidir?", options: ["Rodos", "Kıbrıs", "Girit", "Malta"], correct: 0 },
+  { id: 228, topic: "Osmanlı Yükselme", q: "Kanuni'nin Avusturya üzerine düzenlediği başarısız kuşatma hangisidir?", options: ["I. Viyana Kuşatması", "II. Viyana Kuşatması", "Belgrad Kuşatması", "Zigetvar Kuşatması"], correct: 0 },
+  { id: 229, topic: "Osmanlı Yükselme", q: "Kanuni'nin Bağdat'ı fethettiği sefer hangisidir?", options: ["Irakeyn Seferi", "Nahcivan Seferi", "Malta Seferi", "Zigetvar Seferi"], correct: 0 },
+  { id: 230, topic: "Osmanlı Yükselme", q: "Preveze Deniz Zaferi'nin en önemli sonucu aşağıdakilerden hangisidir?", options: ["Akdeniz'de Osmanlı deniz üstünlüğünün kurulması", "Kıbrıs'ın fethedilmesi", "Rodos'un alınması", "İnebahtı yenilgisinin telafi edilmesi"], correct: 0 },
+  { id: 231, topic: "Osmanlı Yükselme", q: "Kanuni Sultan Süleyman'ın öldüğü son seferi hangisidir?", options: ["Zigetvar Kuşatması", "I. Viyana Kuşatması", "Rodos Kuşatması", "Belgrad Kuşatması"], correct: 0 },
+  { id: 232, topic: "Osmanlı Yükselme", q: "Kanuni Sultan Süleyman'ın şiirlerinde kullandığı mahlas nedir?", options: ["Muhibbi", "Adli", "Avni", "Fatih"], correct: 0 },
+  { id: 233, topic: "Osmanlı Yükselme", q: "Barbaros Hayreddin Paşa hangi görevle donanmanın başına getirilmiştir?", options: ["Kaptan-ı Derya", "Sadrazam", "Şeyhülislam", "Defterdar"], correct: 0 },
+  { id: 234, topic: "Osmanlı Yükselme", q: "Sokullu Mehmed Paşa'nın Karadeniz ile Hazar Denizi'ni birleştirmeyi amaçladığı proje hangisidir?", options: ["Don-Volga Kanal Projesi", "Süveyş Kanal Projesi", "Marmara Kanalı", "Trakya Kanalı"], correct: 0 },
+  { id: 235, topic: "Osmanlı Yükselme", q: "Sokullu Mehmed Paşa'nın Kızıldeniz üzerinden Hint deniz ticaretini kontrol altına almayı amaçladığı proje hangisidir?", options: ["Süveyş Kanal Projesi", "Don-Volga Kanal Projesi", "Boğaziçi Projesi", "Marmara Projesi"], correct: 0 },
+  { id: 236, topic: "Osmanlı Yükselme", q: "Osmanlı deniz gücünün Akdeniz'de en güçlü olduğu dönem hangi padişaha aittir?", options: ["Kanuni Sultan Süleyman", "Yıldırım Bayezid", "II. Bayezid", "I. Murad"], correct: 0 },
+  { id: 237, topic: "Osmanlı Yükselme", q: "Fatih'in İstanbul'un fethinde kullandığı büyük topu döken usta kimdir?", options: ["Urban (Şahi)", "Nizamülmülk", "Mimar Sinan", "Molla Gürani"], correct: 0 },
+  { id: 238, topic: "Osmanlı Yükselme", q: "Fatih Sultan Mehmed döneminde İstanbul'da kurulan medreseler kompleksi hangisidir?", options: ["Sahn-ı Seman Medreseleri", "Nizamiye Medreseleri", "Süleymaniye Medreseleri", "Enderun Mektebi"], correct: 0 },
+  { id: 239, topic: "Osmanlı Yükselme", q: "Şehzadelerin devlet tecrübesi kazanmaları amacıyla gönderildikleri uygulamaya ne ad verilir?", options: ["Sancağa çıkma", "Kafes usulü", "Ekber ve erşed sistemi", "Veraset sistemi"], correct: 0 },
+  { id: 240, topic: "Osmanlı Yükselme", q: "Kanuni Sultan Süleyman döneminde hazırlanan ve kanunların derlendiği düzenlemeye halk arasında ne ad verilmiştir?", options: ["Kanunname-i Osmani", "Mecelle", "Tanzimat Fermanı", "Islahat Fermanı"], correct: 0 },
+
+  // --- Osmanlı Duraklama (+20, toplam 30) ---
+  { id: 241, topic: "Osmanlı Duraklama", q: "Duraklama Dönemi'nin başlıca nedenlerinden biri olan, ticaret yollarının değişmesine yol açan gelişme hangisidir?", options: ["Coğrafi Keşifler", "Rönesans", "Reform", "Sanayi İnkılabı"], correct: 0 },
+  { id: 242, topic: "Osmanlı Duraklama", q: "III. Mehmed döneminde Haçlılara karşı kazanılan savaş hangisidir?", options: ["Haçova Savaşı", "Zitvatorok Savaşı", "Zenta Savaşı", "Prut Savaşı"], correct: 0 },
+  { id: 243, topic: "Osmanlı Duraklama", q: "Yeniçeriler tarafından tahttan indirilerek öldürülen ilk Osmanlı padişahı kimdir?", options: ["II. Osman (Genç Osman)", "I. Ahmed", "IV. Murad", "III. Selim"], correct: 0 },
+  { id: 244, topic: "Osmanlı Duraklama", q: "IV. Murad döneminde alınan ve halk arasında büyük tepki çeken yasak aşağıdakilerden hangisidir?", options: ["Tütün ve kahve yasağı", "Alkol yasağı", "Kitap basımı yasağı", "Seyahat yasağı"], correct: 0 },
+  { id: 245, topic: "Osmanlı Duraklama", q: "IV. Murad'ın Safevilerden geri aldığı şehir hangisidir?", options: ["Bağdat", "Tebriz", "Revan", "Halep"], correct: 0 },
+  { id: 246, topic: "Osmanlı Duraklama", q: "Merkezi otoriteyi yeniden tesis eden ve babadan oğula geçen sadrazamlık dönemine ne ad verilir?", options: ["Köprülüler Dönemi", "Lale Devri", "Tanzimat Dönemi", "Islahat Dönemi"], correct: 0 },
+  { id: 247, topic: "Osmanlı Duraklama", q: "Girit Adası'nın fethini tamamlayan Köprülü ailesinden sadrazam kimdir?", options: ["Köprülüzade Fazıl Ahmed Paşa", "Köprülü Mehmed Paşa", "Merzifonlu Kara Mustafa Paşa", "Amcazade Hüseyin Paşa"], correct: 0 },
+  { id: 248, topic: "Osmanlı Duraklama", q: "Osmanlı Devleti'nin Ruslarla ilk kez karşı karşıya geldiği askeri harekat hangisidir?", options: ["Çehrin Seferleri", "Prut Seferi", "Kırım Seferi", "Azak Seferi"], correct: 0 },
+  { id: 249, topic: "Osmanlı Duraklama", q: "Karlofça Antlaşması'na göre Mora ve Dalmaçya hangi devlete bırakılmıştır?", options: ["Venedik", "Avusturya", "Lehistan", "Rusya"], correct: 0 },
+  { id: 250, topic: "Osmanlı Duraklama", q: "Karlofça Antlaşması'na göre Podolya hangi devlete bırakılmıştır?", options: ["Lehistan", "Avusturya", "Venedik", "Rusya"], correct: 0 },
+  { id: 251, topic: "Osmanlı Duraklama", q: "Karlofça Antlaşması'na göre Azak Kalesi hangi devlete bırakılmıştır?", options: ["Rusya", "Avusturya", "Venedik", "Lehistan"], correct: 0 },
+  { id: 252, topic: "Osmanlı Duraklama", q: "II. Mustafa döneminde Karlofça Antlaşması'na zemin hazırlayan yenilgi hangi savaşta yaşanmıştır?", options: ["Zenta Savaşı", "Haçova Savaşı", "Prut Savaşı", "Viyana Kuşatması"], correct: 0 },
+  { id: 253, topic: "Osmanlı Duraklama", q: "III. Ahmed döneminde Rusya'ya karşı kazanılan ve önemli bir diplomatik başarı olan savaş hangisidir?", options: ["Prut Savaşı", "Zenta Savaşı", "Haçova Savaşı", "Çehrin Seferi"], correct: 0 },
+  { id: 254, topic: "Osmanlı Duraklama", q: "Pasarofça Antlaşması hangi dönemin başlangıcı kabul edilir?", options: ["Lale Devri", "Tanzimat Dönemi", "Köprülüler Dönemi", "Islahat Dönemi"], correct: 0 },
+  { id: 255, topic: "Osmanlı Duraklama", q: "Lale Devri'nde sadrazamlık yapan ve döneme adını veren devlet adamı kimdir?", options: ["Nevşehirli Damat İbrahim Paşa", "Köprülü Mehmed Paşa", "Merzifonlu Kara Mustafa Paşa", "Sokullu Mehmed Paşa"], correct: 0 },
+  { id: 256, topic: "Osmanlı Duraklama", q: "Osmanlı'da ilk Türk matbaasını kuran kişi kimdir?", options: ["İbrahim Müteferrika", "Damat İbrahim Paşa", "Katip Çelebi", "Piri Reis"], correct: 0 },
+  { id: 257, topic: "Osmanlı Duraklama", q: "Lale Devri'ni sona erdiren isyan hangisidir?", options: ["Patrona Halil İsyanı", "Kabakçı Mustafa İsyanı", "Şeyh Bedreddin İsyanı", "31 Mart Vakası"], correct: 0 },
+  { id: 258, topic: "Osmanlı Duraklama", q: "Duraklama Dönemi'nde kapıkulu ayaklanmalarının temel sebebi aşağıdakilerden hangisidir?", options: ["Maaşların düzensiz ödenmesi ve ayarı bozuk para dağıtılması", "Fetihlerin çok hızlı ilerlemesi", "Yeniçerilerin sayısının azaltılması", "Deniz seferlerinin başarısızlığı"], correct: 0 },
+  { id: 259, topic: "Osmanlı Duraklama", q: "Duraklama Dönemi'nde tımar sisteminin bozulmasının en önemli sonucu aşağıdakilerden hangisidir?", options: ["Tarımsal üretimin ve merkezi otoritenin zayıflaması", "Deniz ticaretinin gelişmesi", "Yeniçeri sayısının artması", "Vergilerin azalması"], correct: 0 },
+  { id: 260, topic: "Osmanlı Duraklama", q: "Duraklama Dönemi'nde dönemin sorunlarına çözüm önerileri sunan eserlere ne ad verilir?", options: ["Islahatname (örn. Koçi Bey Risalesi)", "Kanunname", "Şehname", "Divan"], correct: 0 },
+
+  // --- Osmanlı Gerileme (+20, toplam 30) ---
+  { id: 261, topic: "Osmanlı Gerileme", q: "III. Selim'in Nizam-ı Cedid ordusunun masraflarını karşılamak için oluşturduğu hazineye ne ad verilir?", options: ["İrad-ı Cedid Hazinesi", "Duyun-u Umumiye", "Hazine-i Hassa", "Beytülmal"], correct: 0 },
+  { id: 262, topic: "Osmanlı Gerileme", q: "III. Selim döneminde Avrupa başkentlerinde açılan ve gelişmeleri takip etmeyi amaçlayan kurumlar hangisidir?", options: ["Daimi Elçilikler", "Konsolosluklar", "Ticaret Odaları", "Geçici Sefirlikler"], correct: 0 },
+  { id: 263, topic: "Osmanlı Gerileme", q: "Küçük Kaynarca Antlaşması'na göre Rusya'ya tanınan haklardan biri hangisidir?", options: ["Osmanlı topraklarındaki Ortodoksları koruma hakkı", "Kırım'ı doğrudan ilhak hakkı", "İstanbul'da askeri üs kurma hakkı", "Boğazları kapatma hakkı"], correct: 0 },
+  { id: 264, topic: "Osmanlı Gerileme", q: "Kırım, Küçük Kaynarca Antlaşması'ndan kaç yıl sonra Rusya tarafından ilhak edilmiştir?", options: ["9 yıl", "3 yıl", "15 yıl", "1 yıl"], correct: 0 },
+  { id: 265, topic: "Osmanlı Gerileme", q: "Yeniçeri Ocağı'nın kaldırılması olayına ne ad verilir?", options: ["Vaka-i Hayriye", "Kabakçı Mustafa İsyanı", "Patrona Halil İsyanı", "Sened-i İttifak"], correct: 0 },
+  { id: 266, topic: "Osmanlı Gerileme", q: "Yeniçeri Ocağı'nın kaldırılmasından sonra kurulan yeni ordunun adı nedir?", options: ["Asakir-i Mansure-i Muhammediye", "Nizam-ı Cedid", "Redif Ordusu", "Sekban-ı Cedid"], correct: 0 },
+  { id: 267, topic: "Osmanlı Gerileme", q: "II. Mahmud döneminde ayanların gücünü sınırlayan belge hangisidir?", options: ["Sened-i İttifak", "Tanzimat Fermanı", "Islahat Fermanı", "Kanun-i Esasi"], correct: 0 },
+  { id: 268, topic: "Osmanlı Gerileme", q: "Mısır Valisi Mehmed Ali Paşa isyanı sonucunda Rusya'dan yardım istenerek imzalanan antlaşma hangisidir?", options: ["Hünkar İskelesi Antlaşması", "Kütahya Antlaşması", "Londra Antlaşması", "Boğazlar Sözleşmesi"], correct: 0 },
+  { id: 269, topic: "Osmanlı Gerileme", q: "Mısır Sorunu'nun ikinci evresinde Mehmed Ali Paşa'ya Mısır ve Suriye valiliğinin verildiği antlaşma hangisidir?", options: ["Kütahya Antlaşması", "Hünkar İskelesi Antlaşması", "Nizip Antlaşması", "Londra Antlaşması"], correct: 0 },
+  { id: 270, topic: "Osmanlı Gerileme", q: "Osmanlı ordusunun Mısır kuvvetlerine yenildiği savaş hangisidir?", options: ["Nizip Savaşı", "Konya Savaşı", "Varna Savaşı", "Kütahya Savaşı"], correct: 0 },
+  { id: 271, topic: "Osmanlı Gerileme", q: "Boğazların statüsünü uluslararası bir soruna dönüştüren sözleşme hangisidir?", options: ["Londra Boğazlar Sözleşmesi", "Paris Antlaşması", "Berlin Antlaşması", "Ayastefanos Antlaşması"], correct: 0 },
+  { id: 272, topic: "Osmanlı Gerileme", q: "1828-1829 Osmanlı-Rus Savaşı sonunda Yunanistan'ın bağımsızlığını tescil eden antlaşma hangisidir?", options: ["Edirne Antlaşması", "Bükreş Antlaşması", "Yaş Antlaşması", "Ayastefanos Antlaşması"], correct: 0 },
+  { id: 273, topic: "Osmanlı Gerileme", q: "Sırbistan'a özerklik hangi düzenleme ile tanınmıştır?", options: ["1830 tarihli düzenleme", "Berlin Antlaşması", "Ayastefanos Antlaşması", "Bükreş Antlaşması"], correct: 0 },
+  { id: 274, topic: "Osmanlı Gerileme", q: "II. Mahmud döneminde kılık kıyafette yapılan değişikliklerin amacı aşağıdakilerden hangisidir?", options: ["Batılılaşma ve modernleşmeyi sembolize etmek", "Askeri disiplini artırmak", "Dini kuralları güçlendirmek", "Ekonomik tasarruf sağlamak"], correct: 0 },
+  { id: 275, topic: "Osmanlı Gerileme", q: "II. Mahmud döneminde açılan Batı tarzı askeri okullardan biri hangisidir?", options: ["Mekteb-i Harbiye", "Darülfünun", "Mülkiye Mektebi", "Galatasaray Sultanisi"], correct: 0 },
+  { id: 276, topic: "Osmanlı Gerileme", q: "19. yüzyılda Osmanlı Devleti'nin toprak bütünlüğü ve azınlık sorunlarının bütününe verilen isim nedir?", options: ["Şark Meselesi", "Mısır Sorunu", "Boğazlar Sorunu", "Kapitülasyon Sorunu"], correct: 0 },
+  { id: 277, topic: "Osmanlı Gerileme", q: "II. Mahmud döneminde ilk resmi nüfus sayımı hangi amaçla yapılmıştır?", options: ["Asker ve vergi kaynağını belirlemek", "Göçleri önlemek", "Eğitim planlaması yapmak", "Ticareti düzenlemek"], correct: 0 },
+  { id: 278, topic: "Osmanlı Gerileme", q: "II. Mahmud'un merkezi otoriteyi güçlendirmek için mücadele ettiği yerel güç odaklarına ne ad verilir?", options: ["Ayanlar", "Yeniçeriler", "Ulema", "Tımarlı Sipahiler"], correct: 0 },
+  { id: 279, topic: "Osmanlı Gerileme", q: "Osmanlı Devleti'nde ilk posta teşkilatı hangi padişah döneminde kurulmuştur?", options: ["II. Mahmud", "III. Selim", "Abdülmecid", "Abdülaziz"], correct: 0 },
+  { id: 280, topic: "Osmanlı Gerileme", q: "Yeniçeri Ocağı'nın kaldırılmasının en önemli sonucu aşağıdakilerden hangisidir?", options: ["Merkezi otoritenin askeri alanda güçlenmesi", "Devletin zayıflaması", "Tımar sisteminin yeniden kurulması", "Kapitülasyonların kaldırılması"], correct: 0 },
+
+  // --- Islahatlar (+20, toplam 30) ---
+  { id: 281, topic: "Islahatlar", q: "Tanzimat Fermanı'nı hazırlayarak Gülhane Parkı'nda okuyan devlet adamı kimdir?", options: ["Mustafa Reşid Paşa", "Mithat Paşa", "Ali Paşa", "Fuat Paşa"], correct: 0 },
+  { id: 282, topic: "Islahatlar", q: "Tanzimat Fermanı'nın temel ilkeleri arasında aşağıdakilerden hangisi yer almaz?", options: ["Meşrutiyetin ilanı", "Can, mal ve ırz güvenliğinin sağlanması", "Vergilerin adil toplanması", "Askerlik işlerinin düzenli hale getirilmesi"], correct: 0 },
+  { id: 283, topic: "Islahatlar", q: "Islahat Fermanı'nın ilan edilmesinde en etkili olan gelişme aşağıdakilerden hangisidir?", options: ["Kırım Savaşı sonrası Avrupa devletlerinin baskısı", "Yeniçeri Ocağı'nın kaldırılması", "II. Meşrutiyet'in ilanı", "93 Harbi"], correct: 0 },
+  { id: 284, topic: "Islahatlar", q: "Osmanlı Devleti'nin ilk kez dış borç aldığı savaş hangisidir?", options: ["Kırım Savaşı", "93 Harbi", "Balkan Savaşları", "I. Dünya Savaşı"], correct: 0 },
+  { id: 285, topic: "Islahatlar", q: "Kırım Savaşı sonunda Osmanlı Devleti'nin 'Avrupa devleti' sayıldığı antlaşma hangisidir?", options: ["Paris Antlaşması", "Ayastefanos Antlaşması", "Berlin Antlaşması", "Bükreş Antlaşması"], correct: 0 },
+  { id: 286, topic: "Islahatlar", q: "Kanun-i Esasi'nin hazırlanmasında öncülük eden ve 'Anayasa Babası' olarak anılan devlet adamı kimdir?", options: ["Mithat Paşa", "Mustafa Reşid Paşa", "Namık Kemal", "Ali Paşa"], correct: 0 },
+  { id: 287, topic: "Islahatlar", q: "Kanun-i Esasi mücadelesinde etkili olan ve 'Vatan yahut Silistre' adlı eseriyle tanınan Genç Osmanlı kimdir?", options: ["Namık Kemal", "Ziya Paşa", "Mithat Paşa", "Ali Suavi"], correct: 0 },
+  { id: 288, topic: "Islahatlar", q: "I. Meşrutiyet Meclisi, II. Abdülhamid tarafından hangi savaş bahane edilerek kapatılmıştır?", options: ["93 Harbi", "Balkan Savaşları", "Trablusgarp Savaşı", "Kırım Savaşı"], correct: 0 },
+  { id: 289, topic: "Islahatlar", q: "II. Abdülhamid'in Meclis'i kapatarak yönetimi tek elde topladığı döneme ne ad verilir?", options: ["İstibdat Dönemi", "Islahat Dönemi", "Tanzimat Dönemi", "Meşrutiyet Dönemi"], correct: 0 },
+  { id: 290, topic: "Islahatlar", q: "II. Meşrutiyet'in ilan edilmesinde başlıca rol oynayan siyasi cemiyet hangisidir?", options: ["İttihat ve Terakki Cemiyeti", "Hürriyet ve İtilaf Fırkası", "Genç Osmanlılar", "Teşkilat-ı Mahsusa"], correct: 0 },
+  { id: 291, topic: "Islahatlar", q: "Tanzimat Dönemi'nde devlet memuru yetiştirmek amacıyla açılan yükseköğretim kurumu hangisidir?", options: ["Mekteb-i Mülkiye", "Darülfünun", "Mekteb-i Harbiye", "Enderun"], correct: 0 },
+  { id: 292, topic: "Islahatlar", q: "Tanzimat Dönemi'nde şer'i mahkemelerin yanında kurulan laik hukuk mahkemelerine ne ad verilir?", options: ["Nizamiye Mahkemeleri", "Divan-ı Ahkam-ı Adliye", "Şer'iye Mahkemeleri", "Meclis-i Vala"], correct: 0 },
+  { id: 293, topic: "Islahatlar", q: "Tanzimat Dönemi'nde bilimsel çalışmaları desteklemek amacıyla kurulan bilim akademisine ne ad verilir?", options: ["Encümen-i Daniş", "Darülfünun", "Mekteb-i Mülkiye", "Tercüme Odası"], correct: 0 },
+  { id: 294, topic: "Islahatlar", q: "Tanzimat Dönemi'nde taşra yönetimini modernize eden düzenleme hangisidir?", options: ["Vilayet Nizamnamesi", "Kanun-i Esasi", "Islahat Fermanı", "Sened-i İttifak"], correct: 0 },
+  { id: 295, topic: "Islahatlar", q: "Tanzimat Fermanı'nın Osmanlı tarihindeki en önemli özelliği aşağıdakilerden hangisidir?", options: ["Padişahın kendi iradesiyle kendi yetkilerini sınırlandırdığı ilk belge olması", "İlk anayasa olması", "İlk meclisin açılmasını sağlaması", "Halifeliği kaldırması"], correct: 0 },
+  { id: 296, topic: "Islahatlar", q: "Osmanlı Devleti'nde ilk nüfus sayımı ve modern vergi düzenlemeleri hangi dönemde yaygınlaşmıştır?", options: ["Tanzimat Dönemi", "Lale Devri", "Duraklama Dönemi", "Kuruluş Dönemi"], correct: 0 },
+  { id: 297, topic: "Islahatlar", q: "31 Mart Vakası'nı bastırarak II. Meşrutiyet'i koruyan ordu hangisidir?", options: ["Hareket Ordusu", "Nizam-ı Cedid Ordusu", "Asakir-i Mansure", "Redif Ordusu"], correct: 0 },
+  { id: 298, topic: "Islahatlar", q: "31 Mart Vakası'nın ardından II. Abdülhamid'in yerine geçirilen padişah kimdir?", options: ["V. Mehmed (Reşad)", "VI. Mehmed (Vahdettin)", "Abdülmecid", "II. Mahmud"], correct: 0 },
+  { id: 299, topic: "Islahatlar", q: "Duyun-u Umumiye İdaresi'nin kurulmasının temel nedeni aşağıdakilerden hangisidir?", options: ["Osmanlı Devleti'nin dış borçlarını ödeyememesi", "Yeniçeri Ocağı'nın kaldırılması", "Meşrutiyetin ilanı", "Kırım Savaşı'nın kazanılması"], correct: 0 },
+  { id: 300, topic: "Islahatlar", q: "Osmanlı basın hayatının başlangıcı kabul edilen ve devlet eliyle çıkarılan ilk gazete hangisidir?", options: ["Takvim-i Vekayi", "Tercüman-ı Ahval", "Tasvir-i Efkar", "Ceride-i Havadis"], correct: 0 },
+
+  // --- Osmanlı Dağılma (+20, toplam 30) ---
+  { id: 301, topic: "Osmanlı Dağılma", q: "Trablusgarp Savaşı'na katılan ve burada tanınan komutanlardan biri kimdir?", options: ["Mustafa Kemal", "İsmet İnönü", "Kazım Karabekir", "Refet Bele"], correct: 0 },
+  { id: 302, topic: "Osmanlı Dağılma", q: "I. Balkan Savaşı sonunda imzalanan ve sınırı Midye-Enez hattına çeken antlaşma hangisidir?", options: ["Londra Antlaşması", "Bükreş Antlaşması", "Atina Antlaşması", "İstanbul Antlaşması"], correct: 0 },
+  { id: 303, topic: "Osmanlı Dağılma", q: "II. Balkan Savaşı'nda Osmanlı'nın Edirne'yi geri almasının temel nedeni aşağıdakilerden hangisidir?", options: ["Bulgaristan'ın diğer Balkan devletleriyle savaşa girip zayıflaması", "Rusya'nın desteği", "İngiltere'nin arabuluculuğu", "Almanya'nın müdahalesi"], correct: 0 },
+  { id: 304, topic: "Osmanlı Dağılma", q: "I. Dünya Savaşı'nın başlamasına doğrudan neden olan suikast hangisidir?", options: ["Avusturya-Macaristan veliahtının Saraybosna'da öldürülmesi", "İngiltere Kralı'na suikast", "Rus Çarı'na suikast", "Alman İmparatoru'na suikast"], correct: 0 },
+  { id: 305, topic: "Osmanlı Dağılma", q: "Osmanlı Devleti'nin I. Dünya Savaşı'na girme nedenlerinden biri aşağıdakilerden hangisidir?", options: ["Kaybedilen toprakları geri alma umudu", "Sömürge elde etme isteği", "Halifeliği güçlendirme isteği", "Balkanlarda barışı sağlama isteği"], correct: 0 },
+  { id: 306, topic: "Osmanlı Dağılma", q: "Enver Paşa'nın komuta ettiği ve ağır kayıplarla sonuçlanan Kafkas Cephesi harekatı hangisidir?", options: ["Sarıkamış Harekatı", "Kanal Seferi", "Kut'ül Amare", "Çanakkale Savaşı"], correct: 0 },
+  { id: 307, topic: "Osmanlı Dağılma", q: "Cemal Paşa'nın komutasında İngilizlere karşı düzenlenen başarısız sefer hangisidir?", options: ["Kanal (Süveyş) Seferi", "Sarıkamış Harekatı", "Filistin Savunması", "Medine Savunması"], correct: 0 },
+  { id: 308, topic: "Osmanlı Dağılma", q: "I. Dünya Savaşı'nda Medine'yi son ana kadar savunan ve 'Çöl Kaplanı' olarak anılan komutan kimdir?", options: ["Fahreddin Paşa", "Kazım Karabekir", "Mustafa Kemal", "Vehip Paşa"], correct: 0 },
+  { id: 309, topic: "Osmanlı Dağılma", q: "I. Dünya Savaşı sırasında Kafkas Cephesi'nin güvenliği gerekçesiyle Ermenilere uygulanan uygulama nedir?", options: ["Tehcir (zorunlu göç ettirme)", "Sürgün", "İskân", "Vergi affı"], correct: 0 },
+  { id: 310, topic: "Osmanlı Dağılma", q: "Mondros Ateşkes Antlaşması'nda İtilaf Devletleri'ne güvenlik gerekçesiyle işgal hakkı tanıyan madde hangisidir?", options: ["7. Madde", "24. Madde", "1. Madde", "30. Madde"], correct: 0 },
+  { id: 311, topic: "Osmanlı Dağılma", q: "Mondros Ateşkes Antlaşması'nda Doğu Anadolu'daki altı ilin işgal edilebileceğini belirten madde hangisidir?", options: ["24. Madde", "7. Madde", "1. Madde", "16. Madde"], correct: 0 },
+  { id: 312, topic: "Osmanlı Dağılma", q: "Mondros Ateşkes Antlaşması'ndan sonra İtilaf Devletleri tarafından işgal edilen ilk yer neresidir?", options: ["Musul", "İzmir", "İstanbul", "Antep"], correct: 0 },
+  { id: 313, topic: "Osmanlı Dağılma", q: "İzmir'in Yunanistan tarafından işgal edildiği tarih hangisidir?", options: ["15 Mayıs 1919", "19 Mayıs 1919", "30 Ekim 1918", "16 Mart 1920"], correct: 0 },
+  { id: 314, topic: "Osmanlı Dağılma", q: "İzmir'in işgali, Mustafa Kemal'in Samsun'a çıkışından ne kadar önce gerçekleşmiştir?", options: ["4 gün önce", "1 ay önce", "6 ay önce", "1 yıl önce"], correct: 0 },
+  { id: 315, topic: "Osmanlı Dağılma", q: "I. Dünya Savaşı sonrasında galip devletlerin barış şartlarını görüştüğü konferans hangisidir?", options: ["Paris Barış Konferansı", "Lozan Konferansı", "Londra Konferansı", "Cenevre Konferansı"], correct: 0 },
+  { id: 316, topic: "Osmanlı Dağılma", q: "Sevr Antlaşması'nın en önemli özelliği aşağıdakilerden hangisidir?", options: ["Osmanlı Devleti'ni fiilen ortadan kaldıracak ağır şartlar içermesi ve TBMM tarafından tanınmaması", "Osmanlı'nın bağımsızlığını güçlendirmesi", "Türk-Yunan sınırını netleştirmesi", "Boğazları Türklere bırakması"], correct: 0 },
+  { id: 317, topic: "Osmanlı Dağılma", q: "İngiltere ve Fransa arasında Osmanlı topraklarının gizlice paylaşılmasını öngören antlaşma hangisidir?", options: ["Sykes-Picot Antlaşması", "Sevr Antlaşması", "Londra Antlaşması", "Sazonov-Paleologue Antlaşması"], correct: 0 },
+  { id: 318, topic: "Osmanlı Dağılma", q: "I. Dünya Savaşı'nda Osmanlı Devleti'nin müttefiki olan devletler hangileridir?", options: ["Almanya ve Avusturya-Macaristan", "İngiltere ve Fransa", "Rusya ve İtalya", "ABD ve Japonya"], correct: 0 },
+  { id: 319, topic: "Osmanlı Dağılma", q: "Mondros Ateşkes Antlaşması hangi tarihte imzalanmıştır?", options: ["30 Ekim 1918", "11 Kasım 1918", "3 Mart 1918", "15 Mayıs 1919"], correct: 0 },
+  { id: 320, topic: "Osmanlı Dağılma", q: "Trablusgarp Savaşı'nda İtalya'nın kolayca saldırmasının nedenlerinden biri aşağıdakilerden hangisidir?", options: ["Osmanlı Devleti'nin denizden asker gönderememesi", "Osmanlı ordusunun bölgede bulunmaması", "Trablusgarp halkının İtalya'yı desteklemesi", "Balkan Savaşları'nın henüz başlamamış olması"], correct: 0 },
+
+  // --- Milli Mücadele (+20, toplam 30) ---
+  { id: 321, topic: "Milli Mücadele", q: "Amasya Genelgesi'nden önce yayınlanan ve mitingler düzenlenmesini öngören genelge hangisidir?", options: ["Havza Genelgesi", "Erzurum Genelgesi", "Sivas Genelgesi", "Ankara Genelgesi"], correct: 0 },
+  { id: 322, topic: "Milli Mücadele", q: "Mustafa Kemal ile Salih Paşa arasında yapılan ve TBMM'nin varlığının İstanbul tarafından ilk kez tanınmasına zemin hazırlayan görüşme hangisidir?", options: ["Amasya Görüşmesi", "Amasya Genelgesi", "Erzurum Kongresi", "Sivas Kongresi"], correct: 0 },
+  { id: 323, topic: "Milli Mücadele", q: "Sivas Kongresi'nde kurulan ve tüm yurdu temsil eden dernek hangisidir?", options: ["Anadolu ve Rumeli Müdafaa-i Hukuk Cemiyeti", "Kilikyalılar Cemiyeti", "Trakya-Paşaeli Cemiyeti", "Doğu Anadolu Müdafaa-i Hukuk Cemiyeti"], correct: 0 },
+  { id: 324, topic: "Milli Mücadele", q: "Erzurum ve Sivas kongrelerinde oluşturulan, Mustafa Kemal başkanlığındaki kurula ne ad verilir?", options: ["Temsil Heyeti", "TBMM", "İcra Vekilleri Heyeti", "Müdafaa-i Hukuk Cemiyeti"], correct: 0 },
+  { id: 325, topic: "Milli Mücadele", q: "Misak-ı Milli kararlarının kabul edildiği son Osmanlı meclisi hangisidir?", options: ["Son Osmanlı Mebusan Meclisi", "TBMM", "Ayan Meclisi", "Meclis-i Vükela"], correct: 0 },
+  { id: 326, topic: "Milli Mücadele", q: "İstanbul'un İtilaf Devletleri tarafından resmen işgal edildiği tarih hangisidir?", options: ["16 Mart 1920", "15 Mayıs 1919", "30 Ekim 1918", "23 Nisan 1920"], correct: 0 },
+  { id: 327, topic: "Milli Mücadele", q: "İstanbul'un resmen işgali Mustafa Kemal'i hangi adımı atmaya yöneltmiştir?", options: ["TBMM'yi Ankara'da açmak", "Sivas Kongresi'ni toplamak", "Amasya Genelgesi'ni yayınlamak", "Samsun'a çıkmak"], correct: 0 },
+  { id: 328, topic: "Milli Mücadele", q: "TBMM'nin en belirgin özelliklerinden biri aşağıdakilerden hangisidir?", options: ["Güçler birliği ilkesini benimsemesi", "Çok partili sisteme dayanması", "Padişahın onayına bağlı olması", "Yalnızca danışma yetkisine sahip olması"], correct: 0 },
+  { id: 329, topic: "Milli Mücadele", q: "TBMM tarafından çıkarılan ve isyanları bastırmakla görevli olağanüstü mahkemelere ne ad verilir?", options: ["İstiklal Mahkemeleri", "Nizamiye Mahkemeleri", "Divan-ı Harp", "Şer'iye Mahkemeleri"], correct: 0 },
+  { id: 330, topic: "Milli Mücadele", q: "TBMM'nin kabul ettiği ilk anayasa hangisidir?", options: ["Teşkilat-ı Esasiye Kanunu", "Kanun-i Esasi", "1924 Anayasası", "Sened-i İttifak"], correct: 0 },
+  { id: 331, topic: "Milli Mücadele", q: "Düzenli ordunun kazandığı ilk zafer olan ve İsmet Bey'in general rütbesini aldığı savaş hangisidir?", options: ["I. İnönü Savaşı", "II. İnönü Savaşı", "Sakarya Meydan Muharebesi", "Büyük Taarruz"], correct: 0 },
+  { id: 332, topic: "Milli Mücadele", q: "Yunan ordusunun Eskişehir-Kütahya'yı ele geçirerek TBMM'yi Sakarya'ya kadar geri çekilmeye zorladığı savaşlar hangisidir?", options: ["Kütahya-Eskişehir Savaşları", "I. İnönü Savaşı", "II. İnönü Savaşı", "Sakarya Meydan Muharebesi"], correct: 0 },
+  { id: 333, topic: "Milli Mücadele", q: "Sakarya Meydan Muharebesi öncesinde orduyu güçlendirmek amacıyla halktan yardım toplanmasını sağlayan kararlara ne ad verilir?", options: ["Tekalif-i Milliye Emirleri", "Teşkilat-ı Esasiye", "Misak-ı Milli", "İstiklal Mahkemeleri Kararları"], correct: 0 },
+  { id: 334, topic: "Milli Mücadele", q: "TBMM'nin Sovyet Rusya ile imzaladığı ve doğu sınırının kesinleştiği antlaşma hangisidir?", options: ["Kars Antlaşması", "Moskova Antlaşması", "Gümrü Antlaşması", "Ankara Antlaşması"], correct: 0 },
+  { id: 335, topic: "Milli Mücadele", q: "TBMM'yi ilk tanıyan ve dostluk antlaşması imzalayan devlet hangisidir?", options: ["Sovyet Rusya", "Fransa", "İtalya", "Yunanistan"], correct: 0 },
+  { id: 336, topic: "Milli Mücadele", q: "TBMM'nin Fransa ile imzaladığı ve güney sınırını büyük ölçüde belirleyen antlaşma hangisidir?", options: ["Ankara Antlaşması", "Kars Antlaşması", "Moskova Antlaşması", "Gümrü Antlaşması"], correct: 0 },
+  { id: 337, topic: "Milli Mücadele", q: "Büyük Taarruz'dan sonra imzalanan ve savaşı fiilen sona erdiren ateşkes antlaşması hangisidir?", options: ["Mudanya Ateşkes Antlaşması", "Mondros Ateşkes Antlaşması", "Sevr Antlaşması", "Lozan Antlaşması"], correct: 0 },
+  { id: 338, topic: "Milli Mücadele", q: "Lozan Barış Konferansı'nda Türk heyetine başkanlık eden devlet adamı kimdir?", options: ["İsmet Paşa (İnönü)", "Mustafa Kemal", "Rauf Orbay", "Kazım Karabekir"], correct: 0 },
+  { id: 339, topic: "Milli Mücadele", q: "Lozan Barış Konferansı'nda çözülemeyen ve ileri bir tarihe bırakılan sorun hangisidir?", options: ["Musul Sorunu", "Boğazlar Sorunu", "Kapitülasyonlar", "Azınlıklar Sorunu"], correct: 0 },
+  { id: 340, topic: "Milli Mücadele", q: "Misak-ı Milli kararları temel olarak hangi kongrelerde belirlenen esaslara dayanır?", options: ["Erzurum ve Sivas Kongreleri", "Amasya Genelgesi ve Sivas Kongresi", "Yalnızca Erzurum Kongresi", "Yalnızca Sivas Kongresi"], correct: 0 },
+
+  // --- İnkılaplar (+20, toplam 30) ---
+  { id: 341, topic: "İnkılaplar", q: "Mustafa Kemal tarafından kurulan Cumhuriyet döneminin ilk siyasi partisi hangisidir?", options: ["Cumhuriyet Halk Fırkası", "Terakkiperver Cumhuriyet Fırkası", "Serbest Cumhuriyet Fırkası", "Demokrat Parti"], correct: 0 },
+  { id: 342, topic: "İnkılaplar", q: "Cumhuriyet döneminin ilk muhalefet partisi olan ve Şeyh Said İsyanı sonrası kapatılan parti hangisidir?", options: ["Terakkiperver Cumhuriyet Fırkası", "Serbest Cumhuriyet Fırkası", "Cumhuriyet Halk Fırkası", "Ahali Cumhuriyet Fırkası"], correct: 0 },
+  { id: 343, topic: "İnkılaplar", q: "Çok partili hayata geçiş denemesi olarak 1930'da kurulan ve kısa süre sonra kapatılan parti hangisidir?", options: ["Serbest Cumhuriyet Fırkası", "Terakkiperver Cumhuriyet Fırkası", "Demokrat Parti", "Millet Partisi"], correct: 0 },
+  { id: 344, topic: "İnkılaplar", q: "Serbest Cumhuriyet Fırkası'nı kuran devlet adamı kimdir?", options: ["Fethi Okyar", "Kazım Karabekir", "Rauf Orbay", "Ali Fuat Cebesoy"], correct: 0 },
+  { id: 345, topic: "İnkılaplar", q: "1925 yılında dini istismar ederek rejime karşı çıkan isyan hangisidir?", options: ["Şeyh Said İsyanı", "Menemen Olayı", "Kubilay Olayı", "Nasturi İsyanı"], correct: 0 },
+  { id: 346, topic: "İnkılaplar", q: "Şeyh Said İsyanı'nın bastırılması amacıyla çıkarılan ve hükümete olağanüstü yetkiler tanıyan kanun hangisidir?", options: ["Takrir-i Sükun Kanunu", "Hıyanet-i Vataniye Kanunu", "Teşkilat-ı Esasiye Kanunu", "Tevhid-i Tedrisat Kanunu"], correct: 0 },
+  { id: 347, topic: "İnkılaplar", q: "1930'da Menemen'de irticai bir grup tarafından şehit edilen öğretmen kimdir?", options: ["Kubilay", "Ubeydullah Efendi", "Şeyh Said", "Kazım Karabekir"], correct: 0 },
+  { id: 348, topic: "İnkılaplar", q: "Eğitimi tek elden, laik ve çağdaş bir yapıya kavuşturan kanun hangisidir?", options: ["Tevhid-i Tedrisat Kanunu", "Medeni Kanun", "Teşkilat-ı Esasiye Kanunu", "Kabotaj Kanunu"], correct: 0 },
+  { id: 349, topic: "İnkılaplar", q: "Darülfünun'un kaldırılarak yerine kurulan üniversite hangisidir?", options: ["İstanbul Üniversitesi", "Ankara Üniversitesi", "Boğaziçi Üniversitesi", "Orta Doğu Teknik Üniversitesi"], correct: 0 },
+  { id: 350, topic: "İnkılaplar", q: "Türk kara sularında taşımacılığı Türk gemilerine tanıyan kanun hangisidir?", options: ["Kabotaj Kanunu", "Teşvik-i Sanayi Kanunu", "Tevhid-i Tedrisat Kanunu", "Toprak Kanunu"], correct: 0 },
+  { id: 351, topic: "İnkılaplar", q: "Türk Ceza Kanunu, Cumhuriyet döneminde hangi ülkeden esinlenerek hazırlanmıştır?", options: ["İtalya", "İsviçre", "Almanya", "Fransa"], correct: 0 },
+  { id: 352, topic: "İnkılaplar", q: "Türk Ticaret Kanunu, Cumhuriyet döneminde hangi ülke örnek alınarak hazırlanmıştır?", options: ["Almanya", "İtalya", "İsviçre", "İngiltere"], correct: 0 },
+  { id: 353, topic: "İnkılaplar", q: "'Misak-ı İktisadi' kararlarının alındığı kongre hangisidir?", options: ["İzmir İktisat Kongresi", "Sivas Kongresi", "Erzurum Kongresi", "Ankara İktisat Kongresi"], correct: 0 },
+  { id: 354, topic: "İnkılaplar", q: "Halkın en çok şikayet ettiği vergi olan Aşar'ın kaldırılması hangi yıl gerçekleşmiştir?", options: ["1925", "1926", "1923", "1928"], correct: 0 },
+  { id: 355, topic: "İnkılaplar", q: "Cumhuriyetin ilk yıllarında milli bankacılığı geliştirmek amacıyla kurulan banka hangisidir?", options: ["Türkiye İş Bankası", "Sümerbank", "Ziraat Bankası", "Halk Bankası"], correct: 0 },
+  { id: 356, topic: "İnkılaplar", q: "Devletçilik ilkesi doğrultusunda sanayileşmeyi desteklemek için 1933'te kurulan kurum hangisidir?", options: ["Sümerbank", "Türkiye İş Bankası", "Merkez Bankası", "Etibank"], correct: 0 },
+  { id: 357, topic: "İnkılaplar", q: "Türkiye'de planlı sanayileşme çabalarının başlangıcı sayılan uygulama hangisidir?", options: ["Birinci Beş Yıllık Sanayi Planı", "İzmir İktisat Kongresi", "Aşar'ın Kaldırılması", "Kabotaj Kanunu"], correct: 0 },
+  { id: 358, topic: "İnkılaplar", q: "Kadınlara belediye meclisi seçimlerinde seçme ve seçilme hakkı hangi yıl tanınmıştır?", options: ["1930", "1933", "1934", "1935"], correct: 0 },
+  { id: 359, topic: "İnkılaplar", q: "Boğazlar üzerindeki Türk egemenliğini uluslararası alanda kesinleştiren sözleşme hangisidir?", options: ["Montrö Boğazlar Sözleşmesi", "Lozan Antlaşması", "Sevr Antlaşması", "Londra Sözleşmesi"], correct: 0 },
+  { id: 360, topic: "İnkılaplar", q: "Türkiye Cumhuriyeti'ne anavatana en son katılan toprak parçası olan Hatay hangi yıl katılmıştır?", options: ["1939", "1936", "1938", "1945"], correct: 0 },
+];
+
+
+const TOPICS = ["Tümü"].concat(Array.from(new Set(QUESTIONS.map(function(q){ return q.topic; }))));
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function escapeHtml(str) {
+  var div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function sealSVG(sealState) {
+  var color = sealState === "correct" ? "#3F6B4F" : sealState === "wrong" ? "#8B2635" : "#B8935A";
+  var glyph = sealState === "correct" ? "\u2713" : sealState === "wrong" ? "\u2715" : "?";
+  var activeClass = sealState === "idle" ? "" : "active";
+  return '<svg class="seal ' + activeClass + '" viewBox="0 0 120 120">' +
+    '<circle cx="60" cy="60" r="54" fill="none" stroke="' + color + '" stroke-width="3" />' +
+    '<circle cx="60" cy="60" r="46" fill="none" stroke="' + color + '" stroke-width="1.5" stroke-dasharray="2 3" />' +
+    '<text x="60" y="68" text-anchor="middle" font-size="34" font-family="Cormorant Garamond, serif" fill="' + color + '" font-weight="600">' + glyph + '</text>' +
+    '</svg>';
+}
+
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+var state = {
+  screen: "start",   // start | quiz | result
+  topic: "Tümü",
+  count: 15,
+  pool: [],
+  idx: 0,
+  selected: null,
+  answers: [],
+  sealState: "idle",
+  bestScore: null
+};
+
+try {
+  var rawBest = localStorage.getItem("kpss_tarih_best");
+  if (rawBest) state.bestScore = JSON.parse(rawBest);
+} catch (e) { /* no stored record */ }
+
+function availableForTopic(topic) {
+  return topic === "Tümü" ? QUESTIONS : QUESTIONS.filter(function(q){ return q.topic === topic; });
+}
+
+function startQuiz() {
+  var avail = availableForTopic(state.topic);
+  var n = Math.min(state.count, avail.length);
+  state.pool = shuffle(avail).slice(0, n);
+  state.idx = 0;
+  state.answers = [];
+  state.selected = null;
+  state.sealState = "idle";
+  state.screen = "quiz";
+  render();
+}
+
+function choose(i) {
+  if (state.selected !== null) return;
+  state.selected = i;
+  var current = state.pool[state.idx];
+  var isCorrect = i === current.correct;
+  state.sealState = isCorrect ? "correct" : "wrong";
+  state.answers.push({ qid: current.id, chosen: i, correct: current.correct });
+  render();
+}
+
+function nextQuestion() {
+  if (state.idx + 1 >= state.pool.length) {
+    var score = state.answers.filter(function(a){ return a.chosen === a.correct; }).length;
+    var pct = Math.round((score / state.pool.length) * 100);
+    if (!state.bestScore || pct > state.bestScore.pct) {
+      var rec = { pct: pct, score: score, total: state.pool.length, date: new Date().toISOString() };
+      state.bestScore = rec;
+      try { localStorage.setItem("kpss_tarih_best", JSON.stringify(rec)); } catch (e) { /* ignore */ }
     }
+    state.screen = "result";
+    render();
+    return;
+  }
+  state.idx += 1;
+  state.selected = null;
+  state.sealState = "idle";
+  render();
+}
+
+// ---------------------------------------------------------------------------
+// Renderers
+// ---------------------------------------------------------------------------
+function renderStart() {
+  var avail = availableForTopic(state.topic);
+  var countOptions = [10, 15, 20, avail.length].filter(function(v, i, a){ return a.indexOf(v) === i && v > 0; });
+
+  var bestHtml = "";
+  if (state.bestScore) {
+    bestHtml = '<div class="best-badge"><span>En iyi sonucun</span><b>' +
+      state.bestScore.score + '/' + state.bestScore.total + ' \u00b7 %' + state.bestScore.pct + '</b></div>';
+  }
+
+  var chipsHtml = TOPICS.map(function(t) {
+    var active = t === state.topic ? "active" : "";
+    return '<button class="chip ' + active + '" data-topic="' + escapeHtml(t) + '">' + escapeHtml(t) + '</button>';
+  }).join("");
+
+  var countHtml = countOptions.map(function(n) {
+    var active = n === state.count ? "active" : "";
+    var label = n === avail.length ? "T\u00fcm\u00fc" : n;
+    return '<button class="count-btn ' + active + '" data-count="' + n + '">' + label + '</button>';
+  }).join("");
+
+  document.getElementById("root").innerHTML =
+    '<div class="paper">' +
+      '<div class="row-between"><span class="eyebrow">KPSS \u00b7 Tarih</span>' + sealSVG("idle") + '</div>' +
+      '<h1 class="title">S\u0131nav Defteri</h1>' +
+      '<p class="sub">Osmanl\u0131 ve Cumhuriyet tarihinden \u00e7oktan se\u00e7meli sorularla kendini s\u0131na.</p>' +
+      bestHtml +
+      '<label class="field-label">Konu</label>' +
+      '<div class="chip-row">' + chipsHtml + '</div>' +
+      '<label class="field-label">Soru say\u0131s\u0131</label>' +
+      '<div class="count-row">' + countHtml + '</div>' +
+      '<button class="btn-primary" id="start-btn">S\u0131nava Ba\u015fla</button>' +
+    '</div>';
+
+  document.querySelectorAll("[data-topic]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      state.topic = btn.getAttribute("data-topic");
+      var newAvail = availableForTopic(state.topic);
+      if (state.count > newAvail.length) state.count = Math.min(10, newAvail.length);
+      render();
+    });
+  });
+  document.querySelectorAll("[data-count]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      state.count = parseInt(btn.getAttribute("data-count"), 10);
+      render();
+    });
+  });
+  document.getElementById("start-btn").addEventListener("click", startQuiz);
+}
+
+function renderQuiz() {
+  var current = state.pool[state.idx];
+  var score = state.answers.filter(function(a){ return a.chosen === a.correct; }).length;
+  var progressPct = ((state.idx + (state.selected !== null ? 1 : 0)) / state.pool.length) * 100;
+
+  var optionsHtml = current.options.map(function(opt, i) {
+    var cls = "option";
+    if (state.selected !== null) {
+      if (i === current.correct) cls += " correct";
+      else if (i === state.selected) cls += " wrong";
+    }
+    var letter = String.fromCharCode(65 + i);
+    return '<button class="' + cls + '" data-opt="' + i + '" ' + (state.selected !== null ? "disabled" : "") + '>' +
+      '<span class="opt-letter">' + letter + '</span>' + escapeHtml(opt) + '</button>';
+  }).join("");
+
+  var nextBtnHtml = state.selected !== null
+    ? '<button class="btn-primary" id="next-btn">' + (state.idx + 1 >= state.pool.length ? "Sonucu G\u00f6r" : "Sonraki Soru") + '</button>'
+    : "";
+
+  document.getElementById("root").innerHTML =
+    '<div class="paper">' +
+      '<div class="row-between">' +
+        '<div>' +
+          '<span class="eyebrow">' + escapeHtml(current.topic) + '</span>' +
+          '<div class="meta-line">Soru ' + (state.idx + 1) + ' / ' + state.pool.length + ' \u00b7 Puan ' + score + '</div>' +
+        '</div>' +
+        sealSVG(state.sealState) +
+      '</div>' +
+      '<div class="progress-track" style="margin-top:16px;"><div class="progress-fill" style="width:' + progressPct + '%"></div></div>' +
+      '<h2 class="question">' + escapeHtml(current.q) + '</h2>' +
+      '<div class="options">' + optionsHtml + '</div>' +
+      nextBtnHtml +
+    '</div>';
+
+  document.querySelectorAll("[data-opt]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      choose(parseInt(btn.getAttribute("data-opt"), 10));
+    });
+  });
+  var nextBtn = document.getElementById("next-btn");
+  if (nextBtn) nextBtn.addEventListener("click", nextQuestion);
+}
+
+function renderResult() {
+  var score = state.answers.filter(function(a){ return a.chosen === a.correct; }).length;
+  var total = state.pool.length;
+  var pct = Math.round((score / total) * 100);
+  var isNewBest = state.bestScore && state.bestScore.score === score && state.bestScore.total === total && pct >= 50;
+
+  var reviewHtml = state.pool.map(function(q, i) {
+    var a = state.answers[i];
+    var ok = a.chosen === a.correct;
+    return '<div class="review-item ' + (ok ? "ok" : "bad") + '">' +
+      '<div class="q-text">' + (i + 1) + '. ' + escapeHtml(q.q) + '</div>' +
+      '<div class="a-text">Do\u011fru cevap: ' + escapeHtml(q.options[q.correct]) +
+      (ok ? "" : ' \u00b7 Cevab\u0131n: ' + escapeHtml(q.options[a.chosen])) +
+      '</div></div>';
+  }).join("");
+
+  document.getElementById("root").innerHTML =
+    '<div class="paper">' +
+      '<div style="display:flex;justify-content:center;margin-bottom:8px;">' + sealSVG(pct >= 50 ? "correct" : "wrong") + '</div>' +
+      '<div class="result-title"><span class="eyebrow">S\u0131nav Tamamland\u0131</span></div>' +
+      '<div class="result-score">' + score + ' / ' + total + '</div>' +
+      '<div class="result-pct">Ba\u015far\u0131 oran\u0131n %' + pct + (isNewBest ? " \u2014 yeni rekorun!" : "") + '</div>' +
+      '<div class="review-list">' + reviewHtml + '</div>' +
+      '<div class="btn-group">' +
+        '<button class="btn-secondary" id="menu-btn">Men\u00fcye D\u00f6n</button>' +
+        '<button class="btn-primary" id="retry-btn">Tekrar Dene</button>' +
+      '</div>' +
+    '</div>';
+
+  document.getElementById("menu-btn").addEventListener("click", function() {
+    state.screen = "start";
+    render();
+  });
+  document.getElementById("retry-btn").addEventListener("click", startQuiz);
+}
+
+function render() {
+  if (state.screen === "start") renderStart();
+  else if (state.screen === "quiz") renderQuiz();
+  else renderResult();
+}
+
+render();
 </script>
 </body>
 </html>
