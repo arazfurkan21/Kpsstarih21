@@ -76,367 +76,115 @@
 // Soru Bankası — KPSS Tarih
 // ---------------------------------------------------------------------------
 const QUESTIONS = [
-
-
-{
-  id: 1,
-  topic: "İlk Türk Devletleri",
-  q: "İslamiyet öncesi Türklerde hükümdarlık yetkisinin Gök Tanrı tarafından verildiğine inanılan anlayış aşağıdakilerden hangisidir?",
-  options: ["Kurultay", "Töre", "Kut", "Toy"],
-  correct: 2
-},
-{
-  id: 2,
-  topic: "İlk Türk Devletleri",
-  q: "Türklerin bilinen ilk ana yurdu aşağıdakilerden hangisidir?",
-  options: ["Ötüken", "Anadolu", "Kırım", "Horasan"],
+  { id: 1, topic: "İslamiyet Öncesi", q: "Türk tarihinde bilinen ilk Türk devleti aşağıdakilerden hangisidir?", options: ["Asya Hun İmparatorluğu", "Göktürk Kağanlığı", "Uygur Devleti", "Avar Devleti"], correct: 0 },
+  { id: 2, topic: "İslamiyet Öncesi", q: "Türk adının geçtiği ilk Türkçe metin hangisidir?", options: ["Orhun Abideleri", "Divan-ı Lügati't Türk", "Kutadgu Bilig", "Uygur Yazıtları"], correct: 0 },
+  { id: 3, topic: "İslamiyet Öncesi", q: "İlk düzenli ordu olan 'Onlu Sistem' hangi hükümdar tarafından kurulmuştur?", options: ["Bilge Kağan", "Mete Han", "Kürşad", "İstemi Yabgu"], correct: 1 },
+  { id: 4, topic: "İlk Türk-İslam Devletleri", q: "İlk Müslüman Türk devleti hangisidir?", options: ["Karahanlılar", "Gazneliler", "Selçuklular", "Tolunoğulları"], correct: 0 },
+  { id: 5, topic: "İlk Türk-İslam Devletleri", q: "Türk-İslam edebiyatının ilk siyasetname örneği kabul edilen eser hangisidir?", options: ["Divan-ı Hikmet", "Kutadgu Bilig", "Atabetü'l Hakayık", "Divanü Lugati't Türk"], correct: 1 },
+  { id: 48, topic: "İlk Türk-İslam Devletleri", q: "Karahanlı hükümdarlarından İslamiyeti resmi din olarak kabul eden ilk hükümdar kimdir?", options: ["Satuk Buğra Han", "Bilge Kül Kadir Han", "Yusuf Kadir Han", "Arslan Han"], correct: 0 },
+  { id: 6, topic: "Büyük Selçuklu", q: "Büyük Selçuklu Devleti'nin kurucusu kimdir?", options: ["Tuğrul Bey", "Çağrı Bey", "Alparslan", "Melikşah"], correct: 0 },
+  { id: 7, topic: "Büyük Selçuklu", q: "Malazgirt Savaşı hangi yıl gerçekleşmiştir?", options: ["1064", "1071", "1077", "1092"], correct: 1 },
+  { id: 8, topic: "Büyük Selçuklu", q: "Nizamiye Medreselerini kuran Selçuklu veziri kimdir?", options: ["Nizamülmülk", "Kutalmışoğlu Süleyman Şah", "Danişmend Gazi", "Sultan Sencer"], correct: 0 },
+  { id: 9, topic: "Anadolu Selçuklu", q: "Anadolu'da kurulan ilk Türk beyliği hangisidir?", options: ["Saltuklular", "Danişmendliler", "Anadolu Selçuklu Devleti", "Artuklular"], correct: 2 },
+  { id: 63, topic: "Anadolu Selçuklu", q: "Türkiye Selçuklu Devleti'nin kurucusu kimdir?", options: ["Süleyman Şah", "Alparslan", "I. Mesud", "II. Kılıçarslan"], correct: 0 },
+  { id: 64, topic: "Anadolu Selçuklu", q: "İznik'i Türklerden geri almak amacıyla düzenlenen I. Haçlı Seferi hangi yüzyılda gerçekleşmiştir?", options: ["10. yüzyıl", "11. yüzyıl", "12. yüzyıl", "13. yüzyıl"], correct: 1 },
+  { id: 10, topic: "Osmanlı Kuruluş", q: "Osmanlı Devleti'nin kurucusu kimdir?", options: ["Ertuğrul Gazi", "Osman Gazi", "Orhan Gazi", "I. Murad"], correct: 1 },
+  { id: 11, topic: "Osmanlı Kuruluş", q: "Osmanlıların Rumeli'ye geçişte ele geçirdiği ilk üs hangisidir?", options: ["Gelibolu", "Çimpe Kalesi", "Edirne", "Sazlıdere"], correct: 1 },
+  { id: 12, topic: "Osmanlı Kuruluş", q: "Yeniçeri Ocağı hangi padişah döneminde kurulmuştur?", options: ["Orhan Gazi", "I. Murad", "Yıldırım Bayezid", "II. Murad"], correct: 1 },
+  { id: 13, topic: "Osmanlı Yükselme", q: "İstanbul'un fethi hangi yıl gerçekleşmiştir?", options: ["1451", "1453", "1461", "1473"], correct: 1 },
+  { id: 14, topic: "Osmanlı Yükselme", q: "Çaldıran Savaşı hangi iki devlet arasında yapılmıştır?", options: ["Osmanlı - Memlük", "Osmanlı - Safevi", "Osmanlı - Venedik", "Osmanlı - Avusturya"], correct: 1 },
+  { id: 15, topic: "Osmanlı Yükselme", q: "Kanuni Sultan Süleyman döneminde imzalanan ilk kapitülasyonlar hangi ülkeyeydi?", options: ["İngiltere", "Venedik", "Fransa", "Hollanda"], correct: 2 },
+  { id: 16, topic: "Osmanlı Duraklama", q: "Osmanlı Devleti'nin toprak kaybettiği ilk antlaşma hangisidir?", options: ["Karlofça Antlaşması", "Zitvatorok Antlaşması", "Küçük Kaynarca Antlaşması", "Pasarofça Antlaşması"], correct: 0 },
+  { id: 33, topic: "Osmanlı Duraklama", q: "II. Viyana Kuşatması hangi padişah döneminde gerçekleşmiştir?", options: ["IV. Murad", "IV. Mehmed", "II. Süleyman", "II. Mustafa"], correct: 1 },
+  { id: 84, topic: "Osmanlı Duraklama", q: "Duraklama Dönemi'nin başlangıcı genellikle hangi olayla ilişkilendirilir?", options: ["Sokullu Mehmed Paşa'nın ölümü", "İstanbul'un fethi", "Kanuni'nin ölümü", "Preveze Deniz Savaşı"], correct: 0 },
+  { id: 17, topic: "Osmanlı Gerileme", q: "Osmanlı Devleti'nde toprak kaybının en fazla olduğu antlaşma hangisidir?", options: ["Karlofça", "Küçük Kaynarca", "Ziştovi", "Yaş"], correct: 1 },
+  { id: 18, topic: "Osmanlı Gerileme", q: "İlk toprak kaybı yaşanan ve Kırım'ın bağımsızlığını tanıyan antlaşma hangisidir?", options: ["Karlofça", "Küçük Kaynarca", "Pasarofça", "Sistova"], correct: 1 },
+  { id: 34, topic: "Osmanlı Gerileme", q: "Osmanlı Devleti'nde ilk kez toprak karşılığında değil, sürekli maaşla beslenen daimi ordu kurma girişimi hangi padişaha aittir?", options: ["III. Selim", "II. Mahmud", "I. Abdülhamid", "III. Mustafa"], correct: 0 },
+  { id: 19, topic: "Islahatlar", q: "Tanzimat Fermanı hangi padişah döneminde ilan edilmiştir?", options: ["II. Mahmud", "Abdülmecid", "Abdülaziz", "II. Abdülhamid"], correct: 1 },
+  { id: 20, topic: "Islahatlar", q: "Osmanlı'da ilk anayasa (Kanun-i Esasi) hangi yıl ilan edilmiştir?", options: ["1839", "1856", "1876", "1908"], correct: 2 },
+  { id: 36, topic: "Islahatlar", q: "Islahat Fermanı hangi yıl ilan edilmiştir?", options: ["1839", "1856", "1876", "1908"], correct: 1 },
+  { id: 21, topic: "Osmanlı Dağılma", q: "I. Dünya Savaşı'nda Osmanlı'nın taraf olduğu ilk cephe hangisidir?", options: ["Kanal Cephesi", "Kafkas Cephesi", "Çanakkale Cephesi", "Irak Cephesi"], correct: 1 },
+  { id: 22, topic: "Osmanlı Dağılma", q: "Mondros Ateşkes Antlaşması hangi yıl imzalanmıştır?", options: ["1917", "1918", "1919", "1920"], correct: 1 },
+  { id: 37, topic: "Osmanlı Dağılma", q: "Trablusgarp Savaşı sonunda imzalanan antlaşma hangisidir?", options: ["Ouchy (Uşi) Antlaşması", "Londra Antlaşması", "Bükreş Antlaşması", "İstanbul Antlaşması"], correct: 0 },
+  { id: 23, topic: "Milli Mücadele", q: "Mustafa Kemal'in Samsun'a çıkış tarihi hangisidir?", options: ["19 Mayıs 1919", "23 Nisan 1920", "30 Ağustos 1922", "29 Ekim 1923"], correct: 0 },
+  { id: 24, topic: "Milli Mücadele", q: "Misak-ı Milli hangi kongrede kabul edilen esaslara dayanır?", options: ["Amasya Genelgesi", "Erzurum ve Sivas Kongreleri", "Son Osmanlı Mebusan Meclisi", "Havza Genelgesi"], correct: 1 },
+  { id: 25, topic: "Milli Mücadele", q: "TBMM hangi tarihte açılmıştır?", options: ["23 Nisan 1920", "19 Mayıs 1919", "16 Mart 1920", "20 Ocak 1921"], correct: 0 },
+  { id: 28, topic: "İnkılaplar", q: "Cumhuriyet hangi tarihte ilan edilmiştir?", options: ["3 Mart 1924", "29 Ekim 1923", "20 Nisan 1924", "1 Kasım 1922"], correct: 1 },
+  { id: 29, topic: "İnkılaplar", q: "Halifeliğin kaldırılması hangi tarihte gerçekleşmiştir?", options: ["1 Kasım 1922", "3 Mart 1924", "17 Şubat 1926", "10 Nisan 1928"], correct: 1 },
+  {
+  id: 65,
+  topic: "İslamiyet Öncesi",
+  q: "İlk Türk alfabesi olarak kabul edilen alfabe hangisidir?",
+  options: ["Göktürk Alfabesi", "Uygur Alfabesi", "Arap Alfabesi", "Latin Alfabesi"],
   correct: 0
 },
 {
-  id: 3,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türk devletlerinde devlet işlerinin görüşüldüğü meclis aşağıdakilerden hangisidir?",
-  options: ["Toy", "Divan", "Şura", "Kurultay"],
-  correct: 3
-},
-{
-  id: 4,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türk devletlerinde yazısız hukuk kurallarına ne ad verilmiştir?",
-  options: ["Kut", "Töre", "Kurultay", "Yuğ"],
-  correct: 1
-},
-{
-  id: 5,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türk devletlerinde cenaze törenlerine verilen ad aşağıdakilerden hangisidir?",
-  options: ["Şölen", "Toy", "Yuğ", "Sagu"],
-  correct: 2
-},
-{
-  id: 6,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türklerde ölen kişinin ardından söylenen ağıtlara ne ad verilirdi?",
-  options: ["Sav", "Destan", "Koşuk", "Sagu"],
-  correct: 3
-},
-{
-  id: 7,
-  topic: "İlk Türk Devletleri",
-  q: "Türklerin kullandığı ilk takvim aşağıdakilerden hangisidir?",
-  options: ["Hicri Takvim", "12 Hayvanlı Türk Takvimi", "Celali Takvim", "Miladi Takvim"],
-  correct: 1
-}
-{
-  id: 8,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türk devletlerinde hükümdarın eşine verilen unvan aşağıdakilerden hangisidir?",
-  options: ["Katun (Hatun)", "Tigin", "Şad", "Yabgu"],
+  id: 66,
+  topic: "İslamiyet Öncesi",
+  q: "Göktürk Devleti'ni kuran hükümdar kimdir?",
+  options: ["Bumin Kağan", "Bilge Kağan", "Mete Han", "Kutluk Kağan"],
   correct: 0
 },
 {
-  id: 9,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türk devletlerinde hükümdarın erkek çocuklarına ne ad verilirdi?",
-  options: ["Tarkan", "Şad", "Tigin", "Aygucu"],
-  correct: 2
-},
-{
-  id: 10,
-  topic: "İlk Türk Devletleri",
-  q: "Onlu ordu sistemini kurarak Türk askerî teşkilatını güçlendiren hükümdar kimdir?",
-  options: ["Attila", "Mete Han", "Teoman", "Bumin Kağan"],
-  correct: 1
-},
-{
-  id: 11,
-  topic: "İlk Türk Devletleri",
-  q: "Yerleşik hayata geçen ilk Türk devleti aşağıdakilerden hangisidir?",
-  options: ["Göktürkler", "Hunlar", "Uygurlar", "Avarlar"],
-  correct: 2
-},
-{
-  id: 12,
-  topic: "İlk Türk Devletleri",
-  q: "Türk adını devlet adı olarak kullanan ilk Türk devleti hangisidir?",
-  options: ["Hunlar", "Göktürkler", "Uygurlar", "Hazarlar"],
-  correct: 1
-},
-{
-  id: 13,
-  topic: "İlk Türk Devletleri",
-  q: "Orhun Yazıtları hangi Türk devleti döneminde dikilmiştir?",
-  options: ["Uygurlar", "Asya Hunları", "II. Göktürk Devleti", "Avarlar"],
-  correct: 2
-},
-{
-  id: 14,
-  topic: "İlk Türk Devletleri",
-  q: "Orhun Yazıtları hangi alfabe ile yazılmıştır?",
-  options: ["Uygur Alfabesi", "Göktürk Alfabesi", "Arap Alfabesi", "Latin Alfabesi"],
-  correct: 1
-}
-{
-  id: 15,
-  topic: "İlk Türk Devletleri",
-  q: "Aşağıdaki Türk devletlerinden hangisi Museviliği resmi din olarak kabul etmiştir?",
-  options: ["Göktürkler", "Hazarlar", "Uygurlar", "Avarlar"],
-  correct: 1
-},
-{
-  id: 16,
-  topic: "İlk Türk Devletleri",
-  q: "Kâğıt ve matbaayı kullanan ilk Türk devleti hangisidir?",
-  options: ["Hunlar", "Göktürkler", "Uygurlar", "Kırgızlar"],
-  correct: 2
-},
-{
-  id: 17,
-  topic: "İlk Türk Devletleri",
-  q: "İstanbul'u kuşatan ilk Türk devleti aşağıdakilerden hangisidir?",
-  options: ["Avarlar", "Hunlar", "Peçenekler", "Göktürkler"],
+  id: 67,
+  topic: "İslamiyet Öncesi",
+  q: "Türk tarihindeki ilk yazılı belgeler hangileridir?",
+  options: ["Orhun Yazıtları", "Uygur Yazıtları", "Kutadgu Bilig", "Divanü Lügati't-Türk"],
   correct: 0
 },
 {
-  id: 18,
-  topic: "İlk Türk Devletleri",
-  q: "Avrupa'da kurulan ilk Türk devleti hangisidir?",
-  options: ["Bulgarlar", "Avarlar", "Avrupa Hun Devleti", "Hazarlar"],
-  correct: 2
-},
-{
-  id: 19,
-  topic: "İlk Türk Devletleri",
-  q: "Kavimler Göçü'nü başlatan Türk hükümdarı kimdir?",
-  options: ["Attila", "Balamir", "Mete Han", "Teoman"],
-  correct: 1
-},
-{
-  id: 20,
-  topic: "İlk Türk Devletleri",
-  q: "Bozkırın kuyumcuları olarak bilinen Türk topluluğu hangisidir?",
-  options: ["İskitler", "Hunlar", "Göktürkler", "Karluklar"],
+  id: 68,
+  topic: "İslamiyet Öncesi",
+  q: "Uygurların yerleşik hayata geçmesi aşağıdakilerden hangisini geliştirmiştir?",
+  options: ["Tarım ve ticaret", "Göçebelik", "Akıncılık", "Boy teşkilatı"],
   correct: 0
 },
 {
-  id: 21,
-  topic: "İlk Türk Devletleri",
-  q: "Türklerde ölen kişinin mezarına dikilen insan biçimindeki taş heykellere ne ad verilir?",
-  options: ["Kurgan", "Balbal", "Sagu", "Toy"],
-  correct: 1
-}
-{
-  id: 22,
-  topic: "İlk Türk Devletleri",
-  q: "Ergenekon Destanı aşağıdaki Türk devletlerinden hangisine aittir?",
-  options: ["Hunlar", "Göktürkler", "Uygurlar", "Kırgızlar"],
-  correct: 1
-},
-{
-  id: 23,
-  topic: "İlk Türk Devletleri",
-  q: "Oğuz Kağan Destanı hangi Türk devletine aittir?",
-  options: ["Göktürkler", "Asya Hun Devleti", "Uygurlar", "Avarlar"],
-  correct: 1
-},
-{
-  id: 24,
-  topic: "İlk Türk Devletleri",
-  q: "Manas Destanı aşağıdaki Türk topluluklarından hangisine aittir?",
-  options: ["Kırgızlar", "Karluklar", "Hunlar", "Peçenekler"],
+  id: 69,
+  topic: "İslamiyet Öncesi",
+  q: "Asya Hun Devleti'nin en parlak dönemi hangi hükümdar zamanında yaşanmıştır?",
+  options: ["Mete Han", "Teoman", "Attila", "Bilge Kağan"],
   correct: 0
 },
 {
-  id: 25,
-  topic: "İlk Türk Devletleri",
-  q: "Türk tarihinin ilk yazılı belgeleri aşağıdakilerden hangisidir?",
-  options: ["Yenisey Yazıtları", "Orhun Yazıtları", "Kutadgu Bilig", "Divânü Lügâti't-Türk"],
-  correct: 1
-},
-{
-  id: 26,
-  topic: "İlk Türk Devletleri",
-  q: "Orhun Yazıtları'nı yazan kişi aşağıdakilerden hangisidir?",
-  options: ["Tonyukuk", "Yolluğ Tigin", "Bilge Kağan", "Kül Tigin"],
-  correct: 1
-},
-{
-  id: 27,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türk devletlerinde hükümdardan sonra en yetkili kişi aşağıdakilerden hangisidir?",
-  options: ["Şad", "Hatun", "Yabgu", "Tigin"],
-  correct: 2
-},
-{
-  id: 28,
-  topic: "İlk Türk Devletleri",
+  id: 70,
+  topic: "İslamiyet Öncesi",
   q: "İkili teşkilat sistemini ilk uygulayan Türk devleti hangisidir?",
-  options: ["Asya Hun Devleti", "I. Göktürk Devleti", "Uygurlar", "Avarlar"],
-  correct: 1
-},
-{
-  id: 29,
-  topic: "İlk Türk Devletleri",
-  q: "Aşağıdakilerden hangisi İslamiyet öncesi Türklerde sözlü edebiyat ürünlerinden biri değildir?",
-  options: ["Sav", "Koşuk", "Mesnevi", "Sagu"],
-  correct: 2
-},
-{
-  id: 30,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türk devletlerinde şölen adı verilen törenlerin temel amacı nedir?",
-  options: ["Savaş ilan etmek", "Dini eğitim vermek", "Toplumsal birlik ve dayanışmayı sağlamak", "Vergi toplamak"],
-  correct: 2
-}
-{
-  id: 31,
-  topic: "İlk Türk Devletleri",
-  q: "Aşağıdakilerden hangisi Asya Hun Devleti'nin bilinen ilk hükümdarıdır?",
-  options: ["Mete Han", "Teoman", "Bumin Kağan", "Bilge Kağan"],
-  correct: 1
-},
-{
-  id: 32,
-  topic: "İlk Türk Devletleri",
-  q: "Avrupa Hun Devleti'nin en güçlü hükümdarı kimdir?",
-  options: ["Balamir", "Attila", "Mete Han", "Kürşad"],
-  correct: 1
-},
-{
-  id: 33,
-  topic: "İlk Türk Devletleri",
-  q: "Türk tarihinde ilk kez yerleşik yaşama geçen devlet hangisidir?",
-  options: ["Göktürkler", "Uygurlar", "Hunlar", "Avarlar"],
-  correct: 1
-},
-{
-  id: 34,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türk devletlerinde ülke hükümdar ailesinin ortak malı sayılırdı. Bu durumun temel sonucu aşağıdakilerden hangisidir?",
-  options: ["Merkezi otorite güçlenmiştir.", "Taht kavgaları yaşanmıştır.", "Vergiler azalmıştır.", "Göçler sona ermiştir."],
-  correct: 1
-},
-{
-  id: 35,
-  topic: "İlk Türk Devletleri",
-  q: "Türklerde devletin doğu kanadını yönetmekle görevli hanedan üyesine ne ad verilirdi?",
-  options: ["Şad", "Yabgu", "Aygucu", "Tarkan"],
+  options: ["Asya Hun Devleti", "Uygurlar", "Karahanlılar", "Gazneliler"],
   correct: 0
 },
 {
-  id: 36,
-  topic: "İlk Türk Devletleri",
-  q: "Aşağıdakilerden hangisi Uygurların özelliklerinden biri değildir?",
-  options: ["Yerleşik yaşama geçmişlerdir.", "Matbaayı kullanmışlardır.", "Göçebe yaşamı sürdürmüşlerdir.", "Tapınaklar yapmışlardır."],
-  correct: 2
-},
-{
-  id: 37,
-  topic: "İlk Türk Devletleri",
-  q: "Orhun Yazıtları hangi kişiler adına dikilmiştir?",
-  options: ["Bilge Kağan, Kül Tigin ve Tonyukuk", "Mete Han ve Teoman", "Attila ve Balamir", "Kutluk Kağan ve Bumin Kağan"],
+  id: 71,
+  topic: "İslamiyet Öncesi",
+  q: "Göktürk Yazıtları hangi ülkede bulunmaktadır?",
+  options: ["Moğolistan", "Türkiye", "Kazakistan", "Kırgızistan"],
   correct: 0
 },
 {
-  id: 38,
-  topic: "İlk Türk Devletleri",
-  q: "Türklerin bağımsızlık anlayışını en iyi yansıtan kavram aşağıdakilerden hangisidir?",
-  options: ["Cihan Hakimiyeti", "Kut", "İkta", "Tımar"],
+  id: 72,
+  topic: "İslamiyet Öncesi",
+  q: "Uygurların benimsediği dinlerden biri aşağıdakilerden hangisidir?",
+  options: ["Maniheizm", "İslamiyet", "Hristiyanlık", "Musevilik"],
   correct: 0
 },
 {
-  id: 39,
-  topic: "İlk Türk Devletleri",
-  q: "Türklerin tarih boyunca en fazla kullandığı ekonomik faaliyet aşağıdakilerden hangisidir?",
-  options: ["Tarım", "Hayvancılık", "Madencilik", "Balıkçılık"],
-  correct: 1
-},
-{
-  id: 40,
-  topic: "İlk Türk Devletleri",
-  q: "Aşağıdakilerden hangisi İslamiyet öncesi Türk devletlerinde kullanılan unvanlardan biri değildir?",
-  options: ["Kağan", "Han", "Sultan", "Yabgu"],
-  correct: 2
-},
-{
-  id: 41,
-  topic: "İlk Türk Devletleri",
-  q: "Türk tarihinde ilk düzenli ordunun temellerini atan hükümdar kimdir?",
-  options: ["Teoman", "Mete Han", "Attila", "Bilge Kağan"],
-  correct: 1
-},
-{
-  id: 42,
-  topic: "İlk Türk Devletleri",
-  q: "Aşağıdakilerden hangisi Göktürk Devleti'nin yıkılmasından sonra kurulan Türk devletidir?",
-  options: ["Uygurlar", "Asya Hunları", "Avarlar", "İskitler"],
+  id: 73,
+  topic: "İslamiyet Öncesi",
+  q: "Türklerde devleti yönetme yetkisinin Tanrı tarafından verildiğine inanılan anlayışın adı nedir?",
+  options: ["Kut", "Töre", "Kurultay", "Boy"],
   correct: 0
 },
 {
-  id: 43,
-  topic: "İlk Türk Devletleri",
-  q: "Türklerde savaşta yararlılık gösteren kişilere verilen unvan aşağıdakilerden hangisidir?",
-  options: ["Tarkan", "Hatun", "Aygucu", "Tigin"],
+  id: 74,
+  topic: "İslamiyet Öncesi",
+  q: "Türklerde devlet işlerinin görüşüldüğü meclise ne ad verilir?",
+  options: ["Kurultay", "Divan", "Meclis-i Mebusan", "Toygun"],
   correct: 0
 },
-{
-  id: 44,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türk devletlerinde hükümdarın danışmanı konumundaki görevliye ne ad verilirdi?",
-  options: ["Aygucu", "Yabgu", "Şad", "Tigin"],
-  correct: 0
-},
-{
-  id: 45,
-  topic: "İlk Türk Devletleri",
-  q: "Aşağıdaki Türk devletlerinden hangisi Maniheizm dinini kabul etmiştir?",
-  options: ["Göktürkler", "Uygurlar", "Hunlar", "Hazarlar"],
-  correct: 1
-},
-{
-  id: 46,
-  topic: "İlk Türk Devletleri",
-  q: "Türklerde mezarların üzerine yapılan yapıya ne ad verilirdi?",
-  options: ["Balbal", "Kurgan", "Toy", "Sagu"],
-  correct: 1
-},
-{
-  id: 47,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türk devletlerinin Çin ile en fazla mücadele etme nedeni nedir?",
-  options: ["Din farkı", "İpek Yolu hakimiyeti", "Deniz ticareti", "Haçlı Seferleri"],
-  correct: 1
-},
-{
-  id: 48,
-  topic: "İlk Türk Devletleri",
-  q: "Aşağıdakilerden hangisi Göktürk alfabesinin diğer adıdır?",
-  options: ["Orhun Alfabesi", "Soğd Alfabesi", "Uygur Alfabesi", "Arap Alfabesi"],
-  correct: 0
-},
-{
-  id: 49,
-  topic: "İlk Türk Devletleri",
-  q: "İlk Türk devletlerinde devlet yönetiminde kadınların da söz sahibi olduğunu gösteren unvan hangisidir?",
-  options: ["Hatun", "Tigin", "Şad", "Tarkan"],
-  correct: 0
-},
-{
-  id: 50,
-  topic: "İlk Türk Devletleri",
-  q: "İslamiyet öncesi Türk devletlerinde bağımsızlığın sembolü aşağıdakilerden hangisidir?",
-  options: ["Davul ve Sancak", "İkta", "Tımar", "Divan"],
-  correct: 0
-}
+  { id: 30, topic: "İnkılaplar", q: "Harf İnkılabı hangi yıl gerçekleştirilmiştir?", options: ["1925", "1926", "1928", "1930"], correct: 2 },
+];
 
 
-
-
-
-
-
-  
-]
 const TOPICS = Array.from(new Set(QUESTIONS.map(function(q){ return q.topic; })));
 
 function shuffle(arr) {
