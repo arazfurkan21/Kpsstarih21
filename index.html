@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -33,10 +34,9 @@
   .best-badge { margin-bottom: 22px; padding: 10px 14px; border-radius: 3px; font-size: 14px; display: flex; justify-content: space-between; background: #EFE4C7; border: 1px solid #D8C7A0; color: #4A3F2E; }
   .best-badge b { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
   label.field-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #8B7355; margin-bottom: 8px; }
-  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
-  .chip { font-family: inherit; font-size: 14px; padding: 7px 12px; border-radius: 3px; border: 1px solid #C9B688; background: transparent; color: #4A3F2E; cursor: pointer; transition: all .15s ease; }
+  .chip-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 26px; }
+  .chip { font-family: inherit; font-size: 14px; padding: 10px 8px; border-radius: 3px; border: 1px solid #C9B688; background: transparent; color: #4A3F2E; cursor: pointer; transition: all .15s ease; text-align: center; }
   .chip.active { background: #2B2620; color: #F3EBD9; border-color: #2B2620; }
-  .count-row { display: flex; gap: 8px; margin-bottom: 28px; }
   .count-btn { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 9px 0; border-radius: 3px; border: 1px solid #C9B688; background: transparent; color: #4A3F2E; cursor: pointer; transition: all .15s ease; }
   .count-btn.active { background: #8B2635; color: #FBF6E9; border-color: #8B2635; }
   .btn-primary { width: 100%; padding: 13px 0; border-radius: 3px; border: none; background: #2B2620; color: #F3EBD9; font-family: inherit; font-weight: 600; font-size: 16px; letter-spacing: 0.02em; cursor: pointer; transition: opacity .15s ease; }
@@ -168,10 +168,18 @@ function availableForTopic(topic) {
   return QUESTIONS.filter(function(q){ return q.topic === topic; });
 }
 
+function shuffleQuestionOptions(q) {
+  var indices = q.options.map(function(_, i) { return i; });
+  var shuffledIdx = shuffle(indices);
+  var newOptions = shuffledIdx.map(function(i) { return q.options[i]; });
+  var newCorrect = shuffledIdx.indexOf(q.correct);
+  return { id: q.id, topic: q.topic, q: q.q, options: newOptions, correct: newCorrect };
+}
+
 function startQuiz() {
   var avail = availableForTopic(state.topic);
   var n = Math.min(state.count, avail.length);
-  state.pool = shuffle(avail).slice(0, n);
+  state.pool = shuffle(avail).slice(0, n).map(shuffleQuestionOptions);
   state.idx = 0;
   state.answers = [];
   state.selected = null;
@@ -214,7 +222,6 @@ function nextQuestion() {
 // ---------------------------------------------------------------------------
 function renderStart() {
   var avail = availableForTopic(state.topic);
-  var countOptions = [10, 15, 20, avail.length].filter(function(v, i, a){ return a.indexOf(v) === i && v > 0 && v <= avail.length; });
 
   var bestHtml = "";
   if (state.bestScore) {
@@ -227,36 +234,20 @@ function renderStart() {
     return '<button class="chip ' + active + '" data-topic="' + escapeHtml(t) + '">' + escapeHtml(t) + '</button>';
   }).join("");
 
-  var countHtml = countOptions.map(function(n) {
-    var active = n === state.count ? "active" : "";
-    var label = n === avail.length ? "T\u00fcm\u00fc" : n;
-    return '<button class="count-btn ' + active + '" data-count="' + n + '">' + label + '</button>';
-  }).join("");
-
   document.getElementById("root").innerHTML =
     '<div class="paper">' +
       '<div class="row-between"><span class="eyebrow">KPSS \u00b7 Tarih</span>' + sealSVG("idle") + '</div>' +
       '<h1 class="title">S\u0131nav Defteri</h1>' +
-      '<p class="sub">Osmanl\u0131 ve Cumhuriyet tarihinden \u00e7oktan se\u00e7meli sorularla kendini s\u0131na.</p>' +
+      '<p class="sub">Osmanl\u0131 ve Cumhuriyet tarihinden \u00e7oktan se\u00e7meli sorularla kendini s\u0131na. Her konuda 3 soru var.</p>' +
       bestHtml +
       '<label class="field-label">Konu</label>' +
       '<div class="chip-row">' + chipsHtml + '</div>' +
-      '<label class="field-label">Soru say\u0131s\u0131</label>' +
-      '<div class="count-row">' + countHtml + '</div>' +
       '<button class="btn-primary" id="start-btn">S\u0131nava Ba\u015fla</button>' +
     '</div>';
 
   document.querySelectorAll("[data-topic]").forEach(function(btn) {
     btn.addEventListener("click", function() {
       state.topic = btn.getAttribute("data-topic");
-      var newAvail = availableForTopic(state.topic);
-      if (state.count > newAvail.length) state.count = Math.min(10, newAvail.length);
-      render();
-    });
-  });
-  document.querySelectorAll("[data-count]").forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      state.count = parseInt(btn.getAttribute("data-count"), 10);
       render();
     });
   });
