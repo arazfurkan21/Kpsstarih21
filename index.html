@@ -1,220 +1,61 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <title>KPSS Tarih — Sınav Defteri</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@500&display=swap');
-        
-        * { box-sizing: border-box; }
-        
-        html, body { margin: 0; padding: 0; min-height: 100vh; font-family: 'Source Serif 4', Georgia, serif; background: radial-gradient(ellipse at top, #F3EBD9 0%, #E9DDC0 55%, #DFCFA8 100%); color: #2B2620; }
-        
-        body { display: flex; align-items: center; justify-content: center; padding: 16px; }
-        
-        .wrap { width: 100%; max-width: 440px; }
-        
-        .paper { background-color: #FBF6E9; background-image: radial-gradient(circle at 15% 20%, rgba(184,147,90,0.08) 0%, transparent 45%), radial-gradient(circle at 85% 80%, rgba(139,38,53,0.06) 0%, transparent 50%); border: 1px solid #D8C7A0; box-shadow: 0 12px 30px -8px rgba(43,38,32,0.25), 0 1px 0 rgba(255,255,255,0.6) inset; border-radius: 3px; padding: 28px 26px; }
-        
-        .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #8B2635; }
-        
-        .row-between { display: flex; align-items: center; justify-content: space-between; }
-        
-        h1.title { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 42px; line-height: 1.1; margin: 6px 0 8px; }
-        
-        p.sub { font-size: 14px; color: #5B5140; margin: 0 0 24px; }
-        
-        .best-badge { margin-bottom: 22px; padding: 10px 14px; border-radius: 3px; font-size: 14px; display: flex; justify-content: space-between; background: #EFE4C7; border: 1px solid #D8C7A0; color: #4A3F2E; }
-        
-        .best-badge b { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
-        
-        label.field-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #8B7355; margin-bottom: 8px; }
-        
-        .chip-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 26px; }
-        
-        .chip { font-family: inherit; font-size: 14px; padding: 10px 8px; border-radius: 3px; border: 1px solid #C9B688; background: transparent; color: #4A3F2E; cursor: pointer; transition: all .15s ease; text-align: center; }
-        
-        .chip.active { background: #2B2620; color: #F3EBD9; border-color: #2B2620; }
-        
-        .count-btn { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 9px 0; border-radius: 3px; border: 1px solid #C9B688; background: transparent; color: #4A3F2E; cursor: pointer; transition: all .15s ease; }
-        
-        .count-btn.active { background: #8B2635; color: #FBF6E9; border-color: #8B2635; }
-        
-        .btn-primary { width: 100%; padding: 13px 0; border-radius: 3px; border: none; background: #2B2620; color: #F3EBD9; font-family: inherit; font-weight: 600; font-size: 16px; letter-spacing: 0.02em; cursor: pointer; transition: opacity .15s ease; }
-        
-        .btn-primary:hover { opacity: 0.9; }
-        
-        .btn-secondary { flex: 1; padding: 13px 0; border-radius: 3px; background: transparent; border: 1px solid #C9B688; color: #2B2620; font-family: inherit; font-size: 14px; cursor: pointer; }
-        
-        .seal { width: 64px; height: 64px; opacity: 0.4; transform: scale(0.9); transition: all .5s ease; }
-        
-        .seal.active { opacity: 1; transform: scale(1); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25)); }
-        
-        .meta-line { font-size: 12px; margin-top: 4px; color: #8B7355; font-family: 'JetBrains Mono', monospace; }
-        
-        .progress-track { width: 100%; height: 4px; border-radius: 4px; background: #E3D5AE; overflow: hidden; margin-bottom: 24px; }
-        
-        .progress-fill { height: 100%; border-radius: 4px; background: #B8935A; transition: width .3s ease; }
-        
-        h2.question { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px; line-height: 1.3; margin: 0 0 22px; }
-        
-        .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
-        
-        .option { text-align: left; padding: 12px 16px; border-radius: 3px; font-family: inherit; font-size: 15px; cursor: pointer; background: transparent; border: 1px solid #C9B688; color: #2B2620; transition: all .15s ease; }
-        
-        .option .opt-letter { display: inline-block; width: 20px; font-size: 12px; margin-right: 8px; font-family: 'JetBrains Mono', monospace; color: #8B7355; }
-        
-        .option.correct { background: #E4EEE6; border-color: #3F6B4F; color: #2C4A36; }
-        
-        .option.wrong { background: #F4E1E2; border-color: #8B2635; color: #6E1D28; }
-        
-        .option:disabled { cursor: default; }
-        
-        .result-title { text-align: center; }
-        
-        .result-score { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 52px; margin: 12px 0; text-align: center; }
-        
-        .result-pct { font-size: 14px; color: #5B5140; margin-bottom: 24px; text-align: center; }
-        
-        .review-list { text-align: left; margin-bottom: 26px; max-height: 260px; overflow-y: auto; padding-right: 4px; }
-        
-        .review-item { margin-bottom: 10px; padding: 10px 12px; border-radius: 3px; font-size: 12.5px; }
-        
-        .review-item.ok { background: #E4EEE6; border: 1px solid #3F6B4F; }
-        
-        .review-item.bad { background: #F4E1E2; border: 1px solid #8B2635; }
-        
-        .review-item .q-text { font-weight: 600; margin-bottom: 3px; }
-        
-        .review-item .a-text { color: #5B5140; }
-        
-        .btn-group { display: flex; gap: 8px; }
-        
-        @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>KPSS Tarih — Sınav Defteri</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@500&display=swap');
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100vh; font-family: 'Source Serif 4', Georgia, serif; background: radial-gradient(ellipse at top, #F3EBD9 0%, #E9DDC0 55%, #DFCFA8 100%); color: #2B2620; }
+  body { display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .wrap { width: 100%; max-width: 440px; }
+  .paper { background-color: #FBF6E9; border: 1px solid #D8C7A0; box-shadow: 0 12px 30px -8px rgba(43,38,32,0.25); border-radius: 3px; padding: 28px 26px; }
+  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #8B2635; }
+  .row-between { display: flex; align-items: center; justify-content: space-between; }
+  h1.title { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 42px; line-height: 1.1; margin: 6px 0 8px; }
+  .btn-primary { width: 100%; padding: 13px 0; border-radius: 3px; border: none; background: #2B2620; color: #F3EBD9; font-family: inherit; font-weight: 600; cursor: pointer; }
+  .option { text-align: left; padding: 12px 16px; border-radius: 3px; font-family: inherit; font-size: 15px; cursor: pointer; background: transparent; border: 1px solid #C9B688; color: #2B2620; margin-bottom: 10px; width: 100%; }
+  .option.correct { background: #E4EEE6; border-color: #3F6B4F; color: #2C4A36; }
+  .option.wrong { background: #F4E1E2; border-color: #8B2635; color: #6E1D28; }
+  .progress-track { width: 100%; height: 4px; background: #E3D5AE; margin-bottom: 24px; }
+  .progress-fill { height: 100%; background: #B8935A; transition: width .3s ease; }
+</style>
 </head>
 <body>
+<div class="wrap"><div id="root"></div></div>
 
-    <div class="wrap" id="root"></div>
+<script>
+"use strict";
 
-    <script>
-        "use strict";
+const QUESTIONS = [
+  { id: 1, topic: "İslamiyet Öncesi", q: "İslamiyet öncesi Türklerde 'hükümdarlık yetkisinin Tanrı tarafından verildiğine' inanılan anlayış nedir?", options: ["Kut", "Kurultay", "Töre", "Toy"], correct: 0 },
+  { id: 2, topic: "İslamiyet Öncesi", q: "Türklerin ilk ana yurdu neresidir?", options: ["Ötüken", "Anadolu", "Mısır", "İran"], correct: 0 },
+  { id: 3, topic: "İslamiyet Öncesi", q: "Türk adının anlamı aşağıdakilerden hangisidir?", options: ["Güçlü-Kuvvetli", "Savaşçı", "Göç eden", "Türeyen"], correct: 0 },
+  { id: 4, topic: "İslamiyet Öncesi", q: "İslamiyet öncesi Türklerde devlet işlerinin görüşüldüğü meclise ne ad verilir?", options: ["Kurultay", "Kengeş", "Toygun", "Ayuki"], correct: 0 },
+  { id: 5, topic: "İslamiyet Öncesi", q: "İlk Türk devletlerinde ölen kişinin ardından yakılan ağıtlara ne denir?", options: ["Sagu", "Koşuk", "Sav", "Destan"], correct: 0 }
+];
 
-        const QUESTIONS = [
-            { id: 1, topic: "İslamiyet Öncesi", q: "Türk tarihinde bilinen ilk Türk devleti aşağıdakilerden hangisidir?", options: ["Asya Hun İmparatorluğu", "Göktürk Kağanlığı", "Uygur Devleti", "Avar Devleti"], correct: 0 },
-            { id: 2, topic: "İslamiyet Öncesi", q: "Türk adının geçtiği ilk Türkçe metin hangisidir?", options: ["Orhun Abideleri", "Divan-ı Lügati't Türk", "Kutadgu Bilig", "Uygur Yazıtları"], correct: 0 },
-            { id: 3, topic: "İslamiyet Öncesi", q: "İlk düzenli ordu olan 'Onlu Sistem' hangi hükümdar tarafından kurulmuştur?", options: ["Bilge Kağan", "Mete Han", "Kürşad", "İstemi Yabgu"], correct: 1 },
-            { id: 4, topic: "İlk Türk-İslam Devletleri", q: "İlk Müslüman Türk devleti hangisidir?", options: ["Karahanlılar", "Gazneliler", "Selçuklular", "Tolunoğulları"], correct: 0 },
-            { id: 5, topic: "İlk Türk-İslam Devletleri", q: "Türk-İslam edebiyatının ilk siyasetname örneği kabul edilen eser hangisidir?", options: ["Divan-ı Hikmet", "Kutadgu Bilig", "Atabetü'l Hakayık", "Divanü Lugati't Türk"], correct: 1 },
-            { id: 48, topic: "İlk Türk-İslam Devletleri", q: "Karahanlı hükümdarlarından İslamiyeti resmi din olarak kabul eden ilk hükümdar kimdir?", options: ["Satuk Buğra Han", "Bilge Kül Kadir Han", "Yusuf Kadir Han", "Arslan Han"], correct: 0 },
-            { id: 6, topic: "Büyük Selçuklu", q: "Büyük Selçuklu Devleti'nin kurucusu kimdir?", options: ["Tuğrul Bey", "Çağrı Bey", "Alparslan", "Melikşah"], correct: 0 },
-            { id: 7, topic: "Büyük Selçuklu", q: "Malazgirt Savaşı hangi yıl gerçekleşmiştir?", options: ["1064", "1071", "1077", "1092"], correct: 1 },
-            { id: 8, topic: "Büyük Selçuklu", q: "Nizamiye Medreselerini kuran Selçuklu veziri kimdir?", options: ["Nizamülmülk", "Kutalmışoğlu Süleyman Şah", "Danişmend Gazi", "Sultan Sencer"], correct: 0 },
-            { id: 9, topic: "Anadolu Selçuklu", q: "Anadolu'da kurulan ilk Türk beyliği hangisidir?", options: ["Saltuklular", "Danişmendliler", "Anadolu Selçuklu Devleti", "Artuklular"], correct: 2 },
-            { id: 63, topic: "Anadolu Selçuklu", q: "Türkiye Selçuklu Devleti'nin kurucusu kimdir?", options: ["Süleyman Şah", "Alparslan", "I. Mesud", "II. Kılıçarslan"], correct: 0 },
-            { id: 64, topic: "Anadolu Selçuklu", q: "İznik'i Türklerden geri almak amacıyla düzenlenen I. Haçlı Seferi hangi yüzyılda gerçekleşmiştir?", options: ["10. yüzyıl", "11. yüzyıl", "12. yüzyıl", "13. yüzyıl"], correct: 1 },
-            { id: 10, topic: "Osmanlı Kuruluş", q: "Osmanlı Devleti'nin kurucusu kimdir?", options: ["Ertuğrul Gazi", "Osman Gazi", "Orhan Gazi", "I. Murad"], correct: 1 },
-            { id: 11, topic: "Osmanlı Kuruluş", q: "Osmanlıların Rumeli'ye geçişte ele geçirdiği ilk üs hangisidir?", options: ["Gelibolu", "Çimpe Kalesi", "Edirne", "Sazlıdere"], correct: 1 },
-            { id: 12, topic: "Osmanlı Kuruluş", q: "Yeniçeri Ocağı hangi padişah döneminde kurulmuştur?", options: ["Orhan Gazi", "I. Murad", "Yıldırım Bayezid", "II. Murad"], correct: 1 },
-            { id: 13, topic: "Osmanlı Yükselme", q: "İstanbul'un fethi hangi yıl gerçekleşmiştir?", options: ["1451", "1453", "1461", "1473"], correct: 1 },
-            { id: 14, topic: "Osmanlı Yükselme", q: "Çaldıran Savaşı hangi iki devlet arasında yapılmıştır?", options: ["Osmanlı - Memlük", "Osmanlı - Safevi", "Osmanlı - Venedik", "Osmanlı - Avusturya"], correct: 1 },
-            { id: 15, topic: "Osmanlı Yükselme", q: "Kanuni Sultan Süleyman döneminde imzalanan ilk kapitülasyonlar hangi ülkeyeydi?", options: ["İngiltere", "Venedik", "Fransa", "Hollanda"], correct: 2 },
-            { id: 16, topic: "Osmanlı Duraklama", q: "Osmanlı Devleti'nin toprak kaybettiği ilk antlaşma hangisidir?", options: ["Karlofça Antlaşması", "Zitvatorok Antlaşması", "Küçük Kaynarca Antlaşması", "Pasarofça Antlaşması"], correct: 0 },
-            { id: 33, topic: "Osmanlı Duraklama", q: "II. Viyana Kuşatması hangi padişah döneminde gerçekleşmiştir?", options: ["IV. Murad", "IV. Mehmed", "II. Süleyman", "II. Mustafa"], correct: 1 },
-            { id: 84, topic: "Osmanlı Duraklama", q: "Duraklama Dönemi'nin başlangıcı genellikle hangi olayla ilişkilendirilir?", options: ["Sokullu Mehmed Paşa'nın ölümü", "İstanbul'un fethi", "Kanuni'nin ölümü", "Preveze Deniz Savaşı"], correct: 0 },
-            { id: 17, topic: "Osmanlı Gerileme", q: "Osmanlı Devleti'nde toprak kaybının en fazla olduğu antlaşma hangisidir?", options: ["Karlofça", "Küçük Kaynarca", "Ziştovi", "Yaş"], correct: 1 },
-            { id: 18, topic: "Osmanlı Gerileme", q: "İlk toprak kaybı yaşanan ve Kırım'ın bağımsızlığını tanıyan antlaşma hangisidir?", options: ["Karlofça", "Küçük Kaynarca", "Pasarofça", "Sistova"], correct: 1 },
-            { id: 34, topic: "Osmanlı Gerileme", q: "Osmanlı Devleti'nde ilk kez toprak karşılığında değil, sürekli maaşla beslenen daimi ordu kurma girişimi hangi padişaha aittir?", options: ["III. Selim", "II. Mahmud", "I. Abdülhamid", "III. Mustafa"], correct: 0 },
-            { id: 19, topic: "Islahatlar", q: "Tanzimat Fermanı hangi padişah döneminde ilan edilmiştir?", options: ["II. Mahmud", "Abdülmecid", "Abdülaziz", "II. Abdülhamid"], correct: 1 },
-            { id: 20, topic: "Islahatlar", q: "Osmanlı'da ilk anayasa (Kanun-i Esasi) hangi yıl ilan edilmiştir?", options: ["1839", "1856", "1876", "1908"], correct: 2 },
-            { id: 36, topic: "Islahatlar", q: "Islahat Fermanı hangi yıl ilan edilmiştir?", options: ["1839", "1856", "1876", "1908"], correct: 1 },
-            { id: 21, topic: "Osmanlı Dağılma", q: "I. Dünya Savaşı'nda Osmanlı'nın taraf olduğu ilk cephe hangisidir?", options: ["Kanal Cephesi", "Kafkas Cephesi", "Çanakkale Cephesi", "Irak Cephesi"], correct: 1 },
-            { id: 22, topic: "Osmanlı Dağılma", q: "Mondros Ateşkes Antlaşması hangi yıl imzalanmıştır?", options: ["1917", "1918", "1919", "1920"], correct: 1 },
-            { id: 37, topic: "Osmanlı Dağılma", q: "Trablusgarp Savaşı sonunda imzalanan antlaşma hangisidir?", options: ["Ouchy (Uşi) Antlaşması", "Londra Antlaşması", "Bükreş Antlaşması", "İstanbul Antlaşması"], correct: 0 },
-            { id: 23, topic: "Milli Mücadele", q: "Mustafa Kemal'in Samsun'a çıkış tarihi hangisidir?", options: ["19 Mayıs 1919", "23 Nisan 1920", "30 Ağustos 1922", "29 Ekim 1923"], correct: 0 },
-            { id: 24, topic: "Milli Mücadele", q: "Misak-ı Milli hangi kongrede kabul edilen esaslara dayanır?", options: ["Amasya Genelgesi", "Erzurum ve Sivas Kongreleri", "Son Osmanlı Mebusan Meclisi", "Havza Genelgesi"], correct: 1 },
-            { id: 25, topic: "Milli Mücadele", q: "TBMM hangi tarihte açılmıştır?", options: ["23 Nisan 1920", "19 Mayıs 1919", "16 Mart 1920", "20 Ocak 1921"], correct: 0 },
-            { id: 28, topic: "İnkılaplar", q: "Cumhuriyet hangi tarihte ilan edilmiştir?", options: ["3 Mart 1924", "29 Ekim 1923", "20 Nisan 1924", "1 Kasım 1922"], correct: 1 },
-            { id: 29, topic: "İnkılaplar", q: "Halifeliğin kaldırılması hangi tarihte gerçekleşmiştir?", options: ["1 Kasım 1922", "3 Mart 1924", "17 Şubat 1926", "10 Nisan 1928"], correct: 1 },
-            { id: 30, topic: "İnkılaplar", q: "Harf İnkılabı hangi yıl gerçekleştirilmiştir?", options: ["1925", "1926", "1928", "1930"], correct: 2 }
-        ];
+const TOPICS = ["İslamiyet Öncesi"];
+let state = { screen: "start", topic: "İslamiyet Öncesi", pool: [], idx: 0, selected: null, answers: [] };
 
-        const TOPICS = Array.from(new Set(QUESTIONS.map(q => q.topic)));
-        
-        let state = { screen: "start", topic: TOPICS[0], count: 3, pool: [], idx: 0, selected: null, answers: [], sealState: "idle", bestScore: null };
+function render() {
+  const root = document.getElementById("root");
+  if (state.screen === "start") {
+    root.innerHTML = '<div class="paper"><h1 class="title">KPSS Tarih</h1><button class="btn-primary" onclick="start()">Sınava Başla</button></div>';
+  } else {
+    const cur = state.pool[state.idx];
+    root.innerHTML = '<div class="paper"><div class="progress-track"><div class="progress-fill" style="width:' + ((state.idx/state.pool.length)*100) + '%"></div></div><h2>'+cur.q+'</h2>' + 
+    cur.options.map((o, i) => `<button class="option ${state.selected !== null ? (i === cur.correct ? 'correct' : (i === state.selected ? 'wrong' : '')) : ''}" onclick="select(${i})">${o}</button>`).join('') + 
+    (state.selected !== null ? `<button class="btn-primary" onclick="next()">Sonraki</button>` : '') + '</div>';
+  }
+}
 
-        try {
-            var rawBest = localStorage.getItem("kpss_tarih_best");
-            if (rawBest) state.bestScore = JSON.parse(rawBest);
-        } catch (e) {}
+function start() { state.pool = QUESTIONS; state.screen = "quiz"; render(); }
+function select(i) { if(state.selected === null) { state.selected = i; render(); } }
+function next() { if(state.idx + 1 < state.pool.length) { state.idx++; state.selected = null; render(); } else { alert("Test bitti!"); location.reload(); } }
 
-        function shuffle(arr) {
-            var a = arr.slice();
-            for (var i = a.length - 1; i > 0; i--) {
-                var j = Math.floor(Math.random() * (i + 1));
-                var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
-            }
-            return a;
-        }
-
-        function sealSVG(sealState) {
-            var color = sealState === "correct" ? "#3F6B4F" : sealState === "wrong" ? "#8B2635" : "#B8935A";
-            var glyph = sealState === "correct" ? "\u2713" : sealState === "wrong" ? "\u2715" : "?";
-            var activeClass = sealState === "idle" ? "" : "active";
-            return `<svg class="seal ${activeClass}" viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" fill="none" stroke="${color}" stroke-width="3" /><circle cx="60" cy="60" r="46" fill="none" stroke="${color}" stroke-width="1.5" stroke-dasharray="2 3" /><text x="60" y="68" text-anchor="middle" font-size="34" font-family="Cormorant Garamond, serif" fill="${color}" font-weight="600">${glyph}</text></svg>`;
-        }
-
-        function startQuiz() {
-            var avail = QUESTIONS.filter(q => q.topic === state.topic);
-            state.pool = shuffle(avail).slice(0, Math.min(state.count, avail.length)).map(q => {
-                var indices = q.options.map((_, i) => i);
-                var shuffledIdx = shuffle(indices);
-                return { id: q.id, topic: q.topic, q: q.q, options: shuffledIdx.map(i => q.options[i]), correct: shuffledIdx.indexOf(q.correct) };
-            });
-            state.idx = 0; state.answers = []; state.selected = null; state.sealState = "idle"; state.screen = "quiz";
-            render();
-        }
-
-        function choose(i) {
-            if (state.selected !== null) return;
-            state.selected = i;
-            var current = state.pool[state.idx];
-            state.sealState = (i === current.correct) ? "correct" : "wrong";
-            state.answers.push({ qid: current.id, chosen: i, correct: current.correct });
-            render();
-        }
-
-        function nextQuestion() {
-            if (state.idx + 1 >= state.pool.length) {
-                var score = state.answers.filter(a => a.chosen === a.correct).length;
-                var pct = Math.round((score / state.pool.length) * 100);
-                if (!state.bestScore || pct > state.bestScore.pct) {
-                    state.bestScore = { pct, score, total: state.pool.length };
-                    localStorage.setItem("kpss_tarih_best", JSON.stringify(state.bestScore));
-                }
-                state.screen = "result";
-            } else {
-                state.idx += 1; state.selected = null; state.sealState = "idle";
-            }
-            render();
-        }
-
-        function render() {
-            var root = document.getElementById("root");
-            if (state.screen === "start") {
-                var bestHtml = state.bestScore ? `<div class="best-badge"><span>En iyi sonucun</span><b>${state.bestScore.score}/${state.bestScore.total} · %${state.bestScore.pct}</b></div>` : "";
-                root.innerHTML = `<div class="paper"><div class="row-between"><span class="eyebrow">KPSS · Tarih</span>${sealSVG("idle")}</div><h1 class="title">Sınav Defteri</h1><p class="sub">Osmanlı ve Cumhuriyet tarihinden çoktan seçmeli sorularla kendini sınayabilirsin.</p>${bestHtml}<label class="field-label">Konu</label><div class="chip-row">${TOPICS.map(t => `<button class="chip ${t === state.topic ? 'active' : ''}" onclick="state.topic='${t}'; render();">${t}</button>`).join('')}</div><button class="btn-primary" onclick="startQuiz()">Sınava Başla</button></div>`;
-            } else if (state.screen === "quiz") {
-                var current = state.pool[state.idx];
-                var score = state.answers.filter(a => a.chosen === a.correct).length;
-                root.innerHTML = `<div class="paper"><div class="row-between"><div><span class="eyebrow">${current.topic}</span><div class="meta-line">Soru ${state.idx + 1} / ${state.pool.length} · Puan ${score}</div></div>${sealSVG(state.sealState)}</div><div class="progress-track" style="margin-top:16px;"><div class="progress-fill" style="width:${((state.idx + (state.selected !== null ? 1 : 0)) / state.pool.length) * 100}%"></div></div><h2 class="question">${current.q}</h2><div class="options">${current.options.map((opt, i) => `<button class="option ${state.selected !== null ? (i === current.correct ? 'correct' : (i === state.selected ? 'wrong' : '')) : ''}" ${state.selected !== null ? 'disabled' : ''} onclick="choose(${i})"><span class="opt-letter">${String.fromCharCode(65 + i)}</span>${opt}</button>`).join('')}</div>${state.selected !== null ? `<button class="btn-primary" onclick="nextQuestion()">${state.idx + 1 >= state.pool.length ? "Sonucu Gör" : "Sonraki Soru"}</button>` : ""}</div>`;
-            } else {
-                var score = state.answers.filter(a => a.chosen === a.correct).length;
-                var pct = Math.round((score / state.pool.length) * 100);
-                root.innerHTML = `<div class="paper"><div style="display:flex;justify-content:center;margin-bottom:8px;">${sealSVG(pct >= 50 ? "correct" : "wrong")}</div><div class="result-title"><span class="eyebrow">Sınav Tamamlandı</span></div><div class="result-score">${score} / ${state.pool.length}</div><div class="result-pct">Başarı oranın %${pct}</div><div class="review-list">${state.pool.map((q, i) => `<div class="review-item ${state.answers[i].chosen === state.answers[i].correct ? 'ok' : 'bad'}"><div class="q-text">${i + 1}. ${q.q}</div><div class="a-text">Doğru cevap: ${q.options[q.correct]}</div></div>`).join('')}</div><div class="btn-group"><button class="btn-secondary" onclick="state.screen='start'; render();">Menüye Dön</button><button class="btn-primary" onclick="startQuiz()">Tekrar Dene</button></div></div>`;
-            }
-        }
-        render();
-    </script>
+render();
+</script>
 </body>
 </html>
