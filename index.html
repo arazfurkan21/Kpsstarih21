@@ -112,6 +112,32 @@ const QUESTIONS = [
   { id: 28, topic: "İnkılaplar", q: "Cumhuriyet hangi tarihte ilan edilmiştir?", options: ["3 Mart 1924", "29 Ekim 1923", "20 Nisan 1924", "1 Kasım 1922"], correct: 1 },
   { id: 29, topic: "İnkılaplar", q: "Halifeliğin kaldırılması hangi tarihte gerçekleşmiştir?", options: ["1 Kasım 1922", "3 Mart 1924", "17 Şubat 1926", "10 Nisan 1928"], correct: 1 },
   { id: 30, topic: "İnkılaplar", q: "Harf İnkılabı hangi yıl gerçekleştirilmiştir?", options: ["1925", "1926", "1928", "1930"], correct: 2 },
+ {id:100,topic:"İslamiyet Öncesi",q:"Türk adını devlet adı olarak ilk kullanan devlet hangisidir?",options:["Göktürkler","Hunlar","Uygurlar","Avarlar"],answer:0},
+{id:101,topic:"İslamiyet Öncesi",q:"İkili teşkilat sistemini ilk uygulayan devlet hangisidir?",options:["Uygurlar","Hunlar","Göktürkler","Kırgızlar"],answer:1},
+{id:102,topic:"İslamiyet Öncesi",q:"İlk düzenli Türk alfabesi hangisidir?",options:["Uygur","Göktürk","Arap","Latin"],answer:1},
+{id:103,topic:"İslamiyet Öncesi",q:"Kurultayın diğer adı nedir?",options:["Toy","Şölen","Yug","Kengeş"],answer:0},
+{id:104,topic:"İslamiyet Öncesi",q:"Türklerin bilinen ilk yazılı belgeleri hangileridir?",options:["Orhun Yazıtları","Manas Destanı","Dede Korkut","Uygur Metinleri"],answer:0},
+{id:105,topic:"İslamiyet Öncesi",q:"Orhun Yazıtlarını ilk çözen kişi kimdir?",options:["Radloff","Thomsen","Kaşgarlı Mahmut","Bilge Kağan"],answer:1},
+{id:106,topic:"İslamiyet Öncesi",q:"Avrupa Hun Devleti'nin en güçlü hükümdarı kimdir?",options:["Balamir","Attila","Mete Han","Kutluk"],answer:1},
+{id:107,topic:"İslamiyet Öncesi",q:"Onluk ordu sistemini kuran hükümdar kimdir?",options:["Teoman","Mete Han","Attila","Bumin Kağan"],answer:1},
+{id:108,topic:"İslamiyet Öncesi",q:"İlk yerleşik yaşama geçen Türk devleti hangisidir?",options:["Göktürkler","Hunlar","Uygurlar","Avarlar"],answer:2},
+{id:109,topic:"İslamiyet Öncesi",q:"Türklerde cenaze törenine ne ad verilir?",options:["Toy","Şölen","Yug","Sığır"],answer:2},
+{id:110,topic:"İslamiyet Öncesi",q:"Orhun Yazıtları hangi devlet döneminde dikilmiştir?",options:["Uygurlar","II. Göktürk","Asya Hun","Avarlar"],answer:1},
+{id:111,topic:"İslamiyet Öncesi",q:"Türklerde ülkeyi yönetme yetkisinin Gök Tanrı tarafından verildiğine inanılan anlayış nedir?",options:["Töre","Kut","Toy","Yasa"],answer:1},
+{id:112,topic:"İslamiyet Öncesi",q:"İslamiyet öncesi Türklerde hukuk kurallarına ne ad verilirdi?",options:["Şeriat","Kanunname","Töre","Ferman"],answer:2},
+{id:113,topic:"İslamiyet Öncesi",q:"Türklerde hükümdarın eşine ne ad verilirdi?",options:["Hatun","Hanım","Sultan","Tekin"],answer:0},
+{id:114,topic:"İslamiyet Öncesi",q:"Göktürk Devleti'nin kurucusu kimdir?",options:["İstemi Yabgu","Bumin Kağan","Bilge Kağan","Kutluk Kağan"],answer:1},
+{id:115,topic:"İslamiyet Öncesi",q:"İlk Türk devleti hangisidir?",options:["Göktürkler","Asya Hun","Uygurlar","Sakalar"],answer:1},
+{id:116,topic:"İslamiyet Öncesi",q:"Kavimler Göçü'nü başlatan Türk devleti hangisidir?",options:["Avrupa Hun","Göktürk","Asya Hun","Avar"],answer:2},
+{id:117,topic:"İslamiyet Öncesi",q:"Orhun Yazıtlarını yazan kişi kimdir?",options:["Bilge Kağan","Tonyukuk","Yolluğ Tigin","Kül Tigin"],answer:2},
+{id:118,topic:"İslamiyet Öncesi",q:"Türklerde ilk milli alfabe hangisidir?",options:["Göktürk","Uygur","Arap","Soğd"],answer:0},
+{id:119,topic:"İslamiyet Öncesi",q:"Türklerde devlet işlerinin görüşüldüğü meclise ne ad verilirdi?",options:["Kurultay","Divan","Meclis","Şura"],answer:0},
+
+
+
+
+
+
 ];
 
 
@@ -149,7 +175,7 @@ function sealSVG(sealState) {
 var state = {
   screen: "start",   // start | quiz | result
   topic: TOPICS[0],
-  count: 3,
+  count: 5,
   pool: [],
   idx: 0,
   selected: null,
