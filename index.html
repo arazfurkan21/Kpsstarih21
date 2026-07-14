@@ -2,352 +2,71 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>KPSS Tarih — Sınav Defteri</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@500&display=swap');
-
   * { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0; min-height: 100vh;
-    font-family: 'Source Serif 4', Georgia, serif;
-    background: radial-gradient(ellipse at top, #F3EBD9 0%, #E9DDC0 55%, #DFCFA8 100%);
-    color: #2B2620;
-  }
-  body { display: flex; align-items: center; justify-content: center; padding: 16px; }
-  .wrap { width: 100%; max-width: 440px; }
-  .paper {
-    background-color: #FBF6E9;
-    background-image:
-      radial-gradient(circle at 15% 20%, rgba(184,147,90,0.08) 0%, transparent 45%),
-      radial-gradient(circle at 85% 80%, rgba(139,38,53,0.06) 0%, transparent 50%);
-    border: 1px solid #D8C7A0;
-    box-shadow: 0 12px 30px -8px rgba(43,38,32,0.25), 0 1px 0 rgba(255,255,255,0.6) inset;
-    border-radius: 3px;
-    padding: 28px 26px;
-  }
-  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #8B2635; }
-  .row-between { display: flex; align-items: center; justify-content: space-between; }
-  h1.title { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 42px; line-height: 1.1; margin: 6px 0 8px; }
-  p.sub { font-size: 14px; color: #5B5140; margin: 0 0 24px; }
-  .best-badge { margin-bottom: 22px; padding: 10px 14px; border-radius: 3px; font-size: 14px; display: flex; justify-content: space-between; background: #EFE4C7; border: 1px solid #D8C7A0; color: #4A3F2E; }
-  .best-badge b { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
-  label.field-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #8B7355; margin-bottom: 8px; }
-  .chip-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 26px; }
-  .chip { font-family: inherit; font-size: 14px; padding: 10px 8px; border-radius: 3px; border: 1px solid #C9B688; background: transparent; color: #4A3F2E; cursor: pointer; transition: all .15s ease; text-align: center; }
-  .chip.active { background: #2B2620; color: #F3EBD9; border-color: #2B2620; }
-  .count-btn { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 9px 0; border-radius: 3px; border: 1px solid #C9B688; background: transparent; color: #4A3F2E; cursor: pointer; transition: all .15s ease; }
-  .count-btn.active { background: #8B2635; color: #FBF6E9; border-color: #8B2635; }
-  .btn-primary { width: 100%; padding: 13px 0; border-radius: 3px; border: none; background: #2B2620; color: #F3EBD9; font-family: inherit; font-weight: 600; font-size: 16px; letter-spacing: 0.02em; cursor: pointer; transition: opacity .15s ease; }
-  .btn-primary:hover { opacity: 0.9; }
-  .btn-secondary { flex: 1; padding: 13px 0; border-radius: 3px; background: transparent; border: 1px solid #C9B688; color: #2B2620; font-family: inherit; font-size: 14px; cursor: pointer; }
-  .seal { width: 64px; height: 64px; opacity: 0.4; transform: scale(0.9); transition: all .5s ease; }
-  .seal.active { opacity: 1; transform: scale(1); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25)); }
-  .meta-line { font-size: 12px; margin-top: 4px; color: #8B7355; font-family: 'JetBrains Mono', monospace; }
-  .progress-track { width: 100%; height: 4px; border-radius: 4px; background: #E3D5AE; overflow: hidden; margin-bottom: 24px; }
-  .progress-fill { height: 100%; border-radius: 4px; background: #B8935A; transition: width .3s ease; }
-  h2.question { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px; line-height: 1.3; margin: 0 0 22px; }
-  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
-  .option { text-align: left; padding: 12px 16px; border-radius: 3px; font-family: inherit; font-size: 15px; cursor: pointer; background: transparent; border: 1px solid #C9B688; color: #2B2620; transition: all .15s ease; }
-  .option .opt-letter { display: inline-block; width: 20px; font-size: 12px; margin-right: 8px; font-family: 'JetBrains Mono', monospace; color: #8B7355; }
-  .option.correct { background: #E4EEE6; border-color: #3F6B4F; color: #2C4A36; }
-  .option.wrong { background: #F4E1E2; border-color: #8B2635; color: #6E1D28; }
-  .option:disabled { cursor: default; }
-  .result-title { text-align: center; }
-  .result-score { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 52px; margin: 12px 0; text-align: center; }
-  .result-pct { font-size: 14px; color: #5B5140; margin-bottom: 24px; text-align: center; }
-  .review-list { text-align: left; margin-bottom: 26px; max-height: 260px; overflow-y: auto; padding-right: 4px; }
-  .review-item { margin-bottom: 10px; padding: 10px 12px; border-radius: 3px; font-size: 12.5px; }
-  .review-item.ok { background: #E4EEE6; border: 1px solid #3F6B4F; }
-  .review-item.bad { background: #F4E1E2; border: 1px solid #8B2635; }
-  .review-item .q-text { font-weight: 600; margin-bottom: 3px; }
-  .review-item .a-text { color: #5B5140; }
-  .btn-group { display: flex; gap: 8px; }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  body { font-family: sans-serif; background: #F3EBD9; padding: 20px; display: flex; justify-content: center; }
+  .paper { background: #FBF6E9; border: 1px solid #D8C7A0; padding: 20px; width: 100%; max-width: 440px; border-radius: 3px; }
+  .btn-primary { width: 100%; padding: 15px; background: #2B2620; color: #F3EBD9; border: none; cursor: pointer; margin-top: 10px; }
+  .option { width: 100%; padding: 12px; margin: 5px 0; background: transparent; border: 1px solid #C9B688; cursor: pointer; text-align: left; }
+  .option.correct { background: #E4EEE6; border-color: #3F6B4F; }
+  .option.wrong { background: #F4E1E2; border-color: #8B2635; }
+  .question { font-size: 20px; margin-bottom: 20px; }
 </style>
 </head>
 <body>
+
 <div class="wrap"><div id="root"></div></div>
 
 <script>
 "use strict";
 
-// ---------------------------------------------------------------------------
-// Soru Bankası — KPSS Tarih
-// ---------------------------------------------------------------------------
 const QUESTIONS = [
-
-
-const QUESTIONS = [
-  { question: "İslamiyet öncesi Türklerde 'hükümdarlık yetkisinin Tanrı tarafından verildiğine' inanılan anlayış nedir?", options: ["Kut", "Kurultay", "Töre", "Toy"], answer: "Kut" },
-  { question: "Türklerin ilk ana yurdu neresidir?", options: ["Ötüken", "Anadolu", "Mısır", "İran"], answer: "Ötüken" },
-  { question: "Türk adının anlamı aşağıdakilerden hangisidir?", options: ["Güçlü-Kuvvetli", "Savaşçı", "Göç eden", "Türeyen"], answer: "Güçlü-Kuvvetli" },
-  { question: "İslamiyet öncesi Türklerde devlet işlerinin görüşüldüğü meclise ne ad verilir?", options: ["Kurultay", "Kengeş", "Toygun", "Ayuki"], answer: "Kurultay" },
-  { question: "İlk Türk devletlerinde ölen kişinin ardından yakılan ağıtlara ne denir?", options: ["Sagu", "Koşuk", "Sav", "Destan"], answer: "Sagu" },
-  { question: "Türklerin tarih boyunca kullandığı ilk takvim hangisidir?", options: ["12 Hayvanlı Türk Takvimi", "Celali Takvim", "Hicri Takvim", "Miladi Takvim"], answer: "12 Hayvanlı Türk Takvimi" },
-  { question: "İslamiyet öncesi Türklerde hükümdarın eşine ne ad verilir?", options: ["Hatun", "Kağan", "Yabgu", "Tegin"], answer: "Hatun" },
-  { question: "Türk tarihinde 'kendi adına para bastıran ilk hükümdar' kimdir?", options: ["Baga Tarkan", "Mete Han", "Bumin Kağan", "Bilge Kağan"], answer: "Baga Tarkan" },
-  { question: "Oğuz Kağan Destanı hangi Türk devletine aittir?", options: ["Asya Hun Devleti", "Göktürkler", "Uygurlar", "Avarlar"], answer: "Asya Hun Devleti" },
-  { question: "Türklerde 'sözlü hukuk kurallarına' ne ad verilir?", options: ["Töre", "Kut", "Vergi", "Yuğ"], answer: "Töre" },
-  { question: "Yerleşik hayata geçen ilk Türk devleti hangisidir?", options: ["Uygurlar", "Göktürkler", "Hunlar", "Hazarlar"], answer: "Uygurlar" },
-  { question: "İslamiyet öncesi Türklerde cenaze törenlerine ne ad verilir?", options: ["Yuğ", "Şölen", "Toy", "Töre"], answer: "Yuğ" },
-  { question: "Orhun Abideleri hangi devlet döneminde dikilmiştir?", options: ["II. Göktürk Devleti", "I. Göktürk Devleti", "Uygurlar", "Hunlar"], answer: "II. Göktürk Devleti" },
-  { question: "İslamiyet öncesi Türklerde ordu komutanlarına ne ad verilir?", options: ["Tarkan", "Tigin", "Şad", "Aygucı"], answer: "Tarkan" },
-  { question: "Türk tarihinin 'ilk yazılı eseri' kabul edilen metinler hangisidir?", options: ["Orhun Abideleri", "Manas Destanı", "Yenisey Yazıtları", "Alp Er Tunga Destanı"], answer: "Orhun Abideleri" },
-  // ... (Buradan itibaren 15'erli gruplar halinde farklı konuları veya soruları devam ettirebilirsin)
-  { question: "Türklerde ilk defa 'onlu sistem'i kuran hükümdar kimdir?", options: ["Mete Han", "Teoman", "Attila", "Bumin Kağan"], answer: "Mete Han" },
-  { question: "İstanbul'u kuşatan ilk Türk devleti hangisidir?", options: ["Avarlar", "Hunlar", "Göktürkler", "Peçenekler"], answer: "Avarlar" },
-  { question: "Museviliği kabul eden tek Türk devleti hangisidir?", options: ["Hazarlar", "Türgişler", "Karluklar", "Kırgızlar"], answer: "Hazarlar" },
-  { question: "Manas Destanı hangi Türk topluluğuna aittir?", options: ["Kırgızlar", "Uygurlar", "Göktürkler", "Hunlar"], answer: "Kırgızlar" },
-  { question: "Kağıt ve matbaayı Çinlilerden öğrenerek kullanan ilk Türk devleti hangisidir?", options: ["Uygurlar", "Göktürkler", "Avarlar", "Hunlar"], answer: "Uygurlar" },
-  { question: "Türklerde 'hükümdarın devleti yönetme hakkını Tanrı'dan aldığına' inanılan düşünce sistemi nedir?", options: ["Kut", "Töre", "Toy", "Şad"], answer: "Kut" },
-  { question: "İslamiyet öncesi Türklerde 'ikili yönetim' sistemini başlatan devlet hangisidir?", options: ["I. Göktürk Devleti", "Uygurlar", "Asya Hunları", "Avrupa Hunları"], answer: "I. Göktürk Devleti" },
-  { question: "Kavimler Göçü'nün lideri kimdir?", options: ["Balamir", "Mete Han", "Attila", "Teoman"], answer: "Balamir" },
-  { question: "Avrupa'da kurulan ilk Türk devleti hangisidir?", options: ["Avrupa Hun Devleti", "Avarlar", "Bulgarlar", "Hazarlar"], answer: "Avrupa Hun Devleti" },
-  { question: "Türklerde ölen kişinin mezarına dikilen heykellere ne ad verilir?", options: ["Balbal", "Kurgan", "Sagu", "Yuğ"], answer: "Balbal" },
-  { question: "İslamiyet öncesi Türklerde 'hükümdar' unvanı olarak kullanılmamıştır?", options: ["Sultan", "Kağan", "Hakan", "Şanyu"], answer: "Sultan" },
-  { question: "Bozkırın kuyumcuları olarak bilinen Türk topluluğu hangisidir?", options: ["İskitler", "Hunlar", "Göktürkler", "Uygurlar"], answer: "İskitler" },
-  { question: "Ergenekon Destanı hangi Türk devletine aittir?", options: ["Göktürkler", "Uygurlar", "Hunlar", "Kırgızlar"], answer: "Göktürkler" },
-  { question: "İslamiyet öncesi Türklerde 'yazısız hukuk kuralları'nın genel adı nedir?", options: ["Töre", "Yuğ", "Kut", "Toy"], answer: "Töre" },
-  { question: "Türk devletlerinde 'hükümdarın erkek çocuklarına' ne ad verilir?", options: ["Tigin", "Şad", "Tarkan", "Aygucı"], answer: "Tigin" },
-  // ... (Geri kalan 30 soruyu da aynı mantıkla doldurabilirsin)
+  { id: 1, topic: "İslamiyet Öncesi", q: "İslamiyet öncesi Türklerde 'hükümdarlık yetkisinin Tanrı tarafından verildiğine' inanılan anlayış nedir?", options: ["Kut", "Kurultay", "Töre", "Toy"], correct: 0 },
+  { id: 2, topic: "İslamiyet Öncesi", q: "Türklerin ilk ana yurdu neresidir?", options: ["Ötüken", "Anadolu", "Mısır", "İran"], correct: 0 },
+  { id: 3, topic: "İslamiyet Öncesi", q: "Türk adının anlamı aşağıdakilerden hangisidir?", options: ["Güçlü-Kuvvetli", "Savaşçı", "Göç eden", "Türeyen"], correct: 0 },
+  { id: 4, topic: "İslamiyet Öncesi", q: "İslamiyet öncesi Türklerde devlet işlerinin görüşüldüğü meclise ne ad verilir?", options: ["Kurultay", "Kengeş", "Toygun", "Ayuki"], correct: 0 },
+  { id: 5, topic: "İslamiyet Öncesi", q: "İlk Türk devletlerinde ölen kişinin ardından yakılan ağıtlara ne denir?", options: ["Sagu", "Koşuk", "Sav", "Destan"], correct: 0 },
+  { id: 6, topic: "İslamiyet Öncesi", q: "Türklerin tarih boyunca kullandığı ilk takvim hangisidir?", options: ["12 Hayvanlı Türk Takvimi", "Celali Takvim", "Hicri Takvim", "Miladi Takvim"], correct: 0 },
+  { id: 7, topic: "İslamiyet Öncesi", q: "İslamiyet öncesi Türklerde hükümdarın eşine ne ad verilir?", options: ["Hatun", "Kağan", "Yabgu", "Tegin"], correct: 0 },
+  { id: 8, topic: "İslamiyet Öncesi", q: "Türk tarihinde 'kendi adına para bastıran ilk hükümdar' kimdir?", options: ["Baga Tarkan", "Mete Han", "Bumin Kağan", "Bilge Kağan"], correct: 0 },
+  { id: 9, topic: "İslamiyet Öncesi", q: "Oğuz Kağan Destanı hangi Türk devletine aittir?", options: ["Asya Hun Devleti", "Göktürkler", "Uygurlar", "Avarlar"], correct: 0 },
+  { id: 10, topic: "İslamiyet Öncesi", q: "Türklerde 'sözlü hukuk kurallarına' ne ad verilir?", options: ["Töre", "Kut", "Vergi", "Yuğ"], correct: 0 },
+  { id: 11, topic: "İslamiyet Öncesi", q: "Yerleşik hayata geçen ilk Türk devleti hangisidir?", options: ["Uygurlar", "Göktürkler", "Hunlar", "Hazarlar"], correct: 0 },
+  { id: 12, topic: "İslamiyet Öncesi", q: "İslamiyet öncesi Türklerde cenaze törenlerine ne ad verilir?", options: ["Yuğ", "Şölen", "Toy", "Töre"], correct: 0 },
+  { id: 13, topic: "İslamiyet Öncesi", q: "Orhun Abideleri hangi devlet döneminde dikilmiştir?", options: ["II. Göktürk Devleti", "I. Göktürk Devleti", "Uygurlar", "Hunlar"], correct: 0 },
+  { id: 14, topic: "İslamiyet Öncesi", q: "İslamiyet öncesi Türklerde ordu komutanlarına ne ad verilir?", options: ["Tarkan", "Tigin", "Şad", "Aygucı"], correct: 0 },
+  { id: 15, topic: "İslamiyet Öncesi", q: "Türk tarihinin 'ilk yazılı eseri' kabul edilen metinler hangisidir?", options: ["Orhun Abideleri", "Manas Destanı", "Yenisey Yazıtları", "Alp Er Tunga Destanı"], correct: 0 }
 ];
 
-
-
-
-
-
-
-
-
-
-
-
-  
-
-const TOPICS = Array.from(new Set(QUESTIONS.map(function(q){ return q.topic; })));
-
-function shuffle(arr) {
-  var a = arr.slice();
-  for (var i = a.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
-  }
-  return a;
-}
-
-function escapeHtml(str) {
-  var div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-function sealSVG(sealState) {
-  var color = sealState === "correct" ? "#3F6B4F" : sealState === "wrong" ? "#8B2635" : "#B8935A";
-  var glyph = sealState === "correct" ? "\u2713" : sealState === "wrong" ? "\u2715" : "?";
-  var activeClass = sealState === "idle" ? "" : "active";
-  return '<svg class="seal ' + activeClass + '" viewBox="0 0 120 120">' +
-    '<circle cx="60" cy="60" r="54" fill="none" stroke="' + color + '" stroke-width="3" />' +
-    '<circle cx="60" cy="60" r="46" fill="none" stroke="' + color + '" stroke-width="1.5" stroke-dasharray="2 3" />' +
-    '<text x="60" y="68" text-anchor="middle" font-size="34" font-family="Cormorant Garamond, serif" fill="' + color + '" font-weight="600">' + glyph + '</text>' +
-    '</svg>';
-}
-
-// ---------------------------------------------------------------------------
-// State
-// ---------------------------------------------------------------------------
-var state = {
-  screen: "start",   // start | quiz | result
-  topic: TOPICS[0],
-  count: 3,
-  pool: [],
-  idx: 0,
-  selected: null,
-  answers: [],
-  sealState: "idle",
-  bestScore: null
-};
-
-try {
-  var rawBest = localStorage.getItem("kpss_tarih_best");
-  if (rawBest) state.bestScore = JSON.parse(rawBest);
-} catch (e) { /* no stored record */ }
-
-function availableForTopic(topic) {
-  return QUESTIONS.filter(function(q){ return q.topic === topic; });
-}
-
-function shuffleQuestionOptions(q) {
-  var indices = q.options.map(function(_, i) { return i; });
-  var shuffledIdx = shuffle(indices);
-  var newOptions = shuffledIdx.map(function(i) { return q.options[i]; });
-  var newCorrect = shuffledIdx.indexOf(q.correct);
-  return { id: q.id, topic: q.topic, q: q.q, options: newOptions, correct: newCorrect };
-}
+var state = { screen: "start", pool: [], idx: 0, selected: null };
 
 function startQuiz() {
-  var avail = availableForTopic(state.topic);
-  var n = Math.min(state.count, avail.length);
-  state.pool = shuffle(avail).slice(0, n).map(shuffleQuestionOptions);
-  state.idx = 0;
-  state.answers = [];
-  state.selected = null;
-  state.sealState = "idle";
+  state.pool = QUESTIONS; 
+  state.idx = 0; state.selected = null;
   state.screen = "quiz";
   render();
 }
 
-function choose(i) {
-  if (state.selected !== null) return;
-  state.selected = i;
-  var current = state.pool[state.idx];
-  var isCorrect = i === current.correct;
-  state.sealState = isCorrect ? "correct" : "wrong";
-  state.answers.push({ qid: current.id, chosen: i, correct: current.correct });
-  render();
-}
-
-function nextQuestion() {
-  if (state.idx + 1 >= state.pool.length) {
-    var score = state.answers.filter(function(a){ return a.chosen === a.correct; }).length;
-    var pct = Math.round((score / state.pool.length) * 100);
-    if (!state.bestScore || pct > state.bestScore.pct) {
-      var rec = { pct: pct, score: score, total: state.pool.length, date: new Date().toISOString() };
-      state.bestScore = rec;
-      try { localStorage.setItem("kpss_tarih_best", JSON.stringify(rec)); } catch (e) { /* ignore */ }
-    }
-    state.screen = "result";
-    render();
-    return;
-  }
-  state.idx += 1;
-  state.selected = null;
-  state.sealState = "idle";
-  render();
-}
-
-// ---------------------------------------------------------------------------
-// Renderers
-// ---------------------------------------------------------------------------
-function renderStart() {
-  var avail = availableForTopic(state.topic);
-
-  var bestHtml = "";
-  if (state.bestScore) {
-    bestHtml = '<div class="best-badge"><span>En iyi sonucun</span><b>' +
-      state.bestScore.score + '/' + state.bestScore.total + ' \u00b7 %' + state.bestScore.pct + '</b></div>';
-  }
-
-  var chipsHtml = TOPICS.map(function(t) {
-    var active = t === state.topic ? "active" : "";
-    return '<button class="chip ' + active + '" data-topic="' + escapeHtml(t) + '">' + escapeHtml(t) + '</button>';
-  }).join("");
-
-  document.getElementById("root").innerHTML =
-    '<div class="paper">' +
-      '<div class="row-between"><span class="eyebrow">KPSS \u00b7 Tarih</span>' + sealSVG("idle") + '</div>' +
-      '<h1 class="title">S\u0131nav Defteri</h1>' +
-      '<p class="sub">Osmanl\u0131 ve Cumhuriyet tarihinden \u00e7oktan se\u00e7meli sorularla kendini s\u0131na. Her konuda 3 soru var.</p>' +
-      bestHtml +
-      '<label class="field-label">Konu</label>' +
-      '<div class="chip-row">' + chipsHtml + '</div>' +
-      '<button class="btn-primary" id="start-btn">S\u0131nava Ba\u015fla</button>' +
-    '</div>';
-
-  document.querySelectorAll("[data-topic]").forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      state.topic = btn.getAttribute("data-topic");
-      render();
-    });
-  });
-  document.getElementById("start-btn").addEventListener("click", startQuiz);
-}
-
-function renderQuiz() {
-  var current = state.pool[state.idx];
-  var score = state.answers.filter(function(a){ return a.chosen === a.correct; }).length;
-  var progressPct = ((state.idx + (state.selected !== null ? 1 : 0)) / state.pool.length) * 100;
-
-  var optionsHtml = current.options.map(function(opt, i) {
-    var cls = "option";
-    if (state.selected !== null) {
-      if (i === current.correct) cls += " correct";
-      else if (i === state.selected) cls += " wrong";
-    }
-    var letter = String.fromCharCode(65 + i);
-    return '<button class="' + cls + '" data-opt="' + i + '" ' + (state.selected !== null ? "disabled" : "") + '>' +
-      '<span class="opt-letter">' + letter + '</span>' + escapeHtml(opt) + '</button>';
-  }).join("");
-
-  var nextBtnHtml = state.selected !== null
-    ? '<button class="btn-primary" id="next-btn">' + (state.idx + 1 >= state.pool.length ? "Sonucu G\u00f6r" : "Sonraki Soru") + '</button>'
-    : "";
-
-  document.getElementById("root").innerHTML =
-    '<div class="paper">' +
-      '<div class="row-between">' +
-        '<div>' +
-          '<span class="eyebrow">' + escapeHtml(current.topic) + '</span>' +
-          '<div class="meta-line">Soru ' + (state.idx + 1) + ' / ' + state.pool.length + ' \u00b7 Puan ' + score + '</div>' +
-        '</div>' +
-        sealSVG(state.sealState) +
-      '</div>' +
-      '<div class="progress-track" style="margin-top:16px;"><div class="progress-fill" style="width:' + progressPct + '%"></div></div>' +
-      '<h2 class="question">' + escapeHtml(current.q) + '</h2>' +
-      '<div class="options">' + optionsHtml + '</div>' +
-      nextBtnHtml +
-    '</div>';
-
-  document.querySelectorAll("[data-opt]").forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      choose(parseInt(btn.getAttribute("data-opt"), 10));
-    });
-  });
-  var nextBtn = document.getElementById("next-btn");
-  if (nextBtn) nextBtn.addEventListener("click", nextQuestion);
-}
-
-function renderResult() {
-  var score = state.answers.filter(function(a){ return a.chosen === a.correct; }).length;
-  var total = state.pool.length;
-  var pct = Math.round((score / total) * 100);
-  var isNewBest = state.bestScore && state.bestScore.score === score && state.bestScore.total === total && pct >= 50;
-
-  var reviewHtml = state.pool.map(function(q, i) {
-    var a = state.answers[i];
-    var ok = a.chosen === a.correct;
-    return '<div class="review-item ' + (ok ? "ok" : "bad") + '">' +
-      '<div class="q-text">' + (i + 1) + '. ' + escapeHtml(q.q) + '</div>' +
-      '<div class="a-text">Do\u011fru cevap: ' + escapeHtml(q.options[q.correct]) +
-      (ok ? "" : ' \u00b7 Cevab\u0131n: ' + escapeHtml(q.options[a.chosen])) +
-      '</div></div>';
-  }).join("");
-
-  document.getElementById("root").innerHTML =
-    '<div class="paper">' +
-      '<div style="display:flex;justify-content:center;margin-bottom:8px;">' + sealSVG(pct >= 50 ? "correct" : "wrong") + '</div>' +
-      '<div class="result-title"><span class="eyebrow">S\u0131nav Tamamland\u0131</span></div>' +
-      '<div class="result-score">' + score + ' / ' + total + '</div>' +
-      '<div class="result-pct">Ba\u015far\u0131 oran\u0131n %' + pct + (isNewBest ? " \u2014 yeni rekorun!" : "") + '</div>' +
-      '<div class="review-list">' + reviewHtml + '</div>' +
-      '<div class="btn-group">' +
-        '<button class="btn-secondary" id="menu-btn">Men\u00fcye D\u00f6n</button>' +
-        '<button class="btn-primary" id="retry-btn">Tekrar Dene</button>' +
-      '</div>' +
-    '</div>';
-
-  document.getElementById("menu-btn").addEventListener("click", function() {
-    state.screen = "start";
-    render();
-  });
-  document.getElementById("retry-btn").addEventListener("click", startQuiz);
-}
-
 function render() {
-  if (state.screen === "start") renderStart();
-  else if (state.screen === "quiz") renderQuiz();
-  else renderResult();
+  var root = document.getElementById("root");
+  if (state.screen === "start") {
+    root.innerHTML = '<div class="paper"><h1>KPSS Tarih</h1><button class="btn-primary" id="start-btn">Sınava Başla</button></div>';
+    document.getElementById("start-btn").onclick = startQuiz;
+  } else if (state.screen === "quiz") {
+    var cur = state.pool[state.idx];
+    root.innerHTML = '<div class="paper"><h2 class="question">'+cur.q+'</h2>' +
+      cur.options.map((o, i) => `<button class="option" onclick="check(${i})">${o}</button>`).join('') + '</div>';
+  }
+}
+
+function check(i) {
+  var cur = state.pool[state.idx];
+  if(i === cur.correct) alert("Doğru!");
+  else alert("Yanlış!");
+  if(state.idx + 1 < state.pool.length) { state.idx++; render(); }
+  else { alert("Test Bitti"); location.reload(); }
 }
 
 render();
